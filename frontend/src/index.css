@@ -1,0 +1,17 @@
+:root {
+  --primary: #D4AF37;
+  --foreground: #1a1a1a;
+  --muted: #888888;
+  --bg: #fcfcfc;
+  --card: #ffffff;
+  --border: #eeeeee;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  font-family: 'Inter', sans-serif; 
+  background: var(--bg); 
+  color: var(--foreground);
+  line-height: 1.5;
+}
+button { cursor: pointer; border: none; outline: none; }
