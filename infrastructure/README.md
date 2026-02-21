@@ -32,3 +32,37 @@ OVERAL ARCHITECTURE
 │  │              Amazon ECR (Container Registry)               │     │
 │  └────────────────────────────────────────────────────────────┘     │
 └──────────────────────────────────────────────────────────────────────┘
+
+Terraform/IaC Folder Structure
+
+infrastructure/
+├── modules/
+│   ├── networking/
+│   │   ├── vpc.tf
+│   │   ├── subnets.tf
+│   │   ├── route-tables.tf
+│   │   └── outputs.tf
+│   ├── compute/
+│   │   ├── ecs-cluster.tf
+│   │   ├── task-definitions/
+│   │   │   ├── frontend.json
+│   │   │   └── backend.json
+│   │   └── services.tf
+│   ├── load-balancing/
+│   │   ├── external-alb.tf
+│   │   ├── internal-alb.tf
+│   │   └── target-groups.tf
+│   └── security/
+│       ├── security-groups.tf
+│       ├── iam-roles.tf
+│       └── secrets-manager.tf
+├── environments/
+│   ├── dev/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── terraform.tfvars
+│   ├── staging/
+│   └── prod/
+└── Jenkinsfile
+
+
