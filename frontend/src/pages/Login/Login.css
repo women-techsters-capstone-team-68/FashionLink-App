@@ -1,0 +1,36 @@
+.auth-container {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+}
+.auth-container h1 {
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+.input-group {
+  text-align: left;
+  margin-bottom: 20px;
+}
+.input-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #666;
+}
+.input-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+.primary-btn {
+  width: 100%;
+  padding: 14px;
+  background: #000;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-top: 10px;
+}

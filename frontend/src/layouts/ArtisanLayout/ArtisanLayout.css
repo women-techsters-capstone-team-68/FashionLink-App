@@ -1,0 +1,33 @@
+.layout-container {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: #fff;
+}
+.content {
+  padding: 20px 20px 80px 20px;
+}
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  max-width: 430px;
+  height: 70px;
+  background: #fff;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #888;
+  text-decoration: none;
+  font-size: 10px;
+}
+.bottom-nav a.active {
+  color: #d4af37;
+}

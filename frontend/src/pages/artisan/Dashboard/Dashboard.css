@@ -1,0 +1,38 @@
+.dashboard .h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+.stat-card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+.stat-card h3 {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+}
+.stat-card p {
+  font-size: 24px;
+  font-weight: bold;
+  color: #d4af37;
+}
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tag {
+  background: #e3f2fd;
+  color: #1976d2;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
