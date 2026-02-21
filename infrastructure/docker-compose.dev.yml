@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ../frontend:/app  # For hot reload
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.backend
+    ports:
+      - "3001:3000"
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_KEY=${SUPABASE_KEY}
+    volumes:
+      - ../backend:/app

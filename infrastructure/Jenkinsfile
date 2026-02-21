@@ -1,0 +1,91 @@
+// Jenkins Pipeline (Jenkinsfile)
+pipeline {
+    agent any
+    
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-1'
+        ECR_REPOSITORY = 'fashionlink-app'
+        ECS_CLUSTER = 'fashionlink-cluster'
+        FRONTEND_SERVICE = 'frontend-service'
+        BACKEND_SERVICE = 'backend-service'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Build & Test') {
+            parallel {
+                stage('Frontend Build') {
+                    steps {
+                        dir('frontend') {
+                            sh 'npm install'
+                            sh 'npm run build'
+                            sh 'npm test'
+                        }
+                    }
+                }
+                stage('Backend Build') {
+                    steps {
+                        dir('backend') {
+                            sh 'npm install'
+                            sh 'npm test'
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Security Scan') {
+            steps {
+                // SonarQube integration for code quality
+                sh 'sonar-scanner'
+            }
+        }
+        
+        stage('Build Docker Images') {
+            parallel {
+                stage('Frontend Image') {
+                    steps {
+                        dir('frontend') {
+                            sh 'docker build -t frontend:${BUILD_NUMBER} .'
+                            sh 'docker tag frontend:${BUILD_NUMBER} ${ECR_REPOSITORY}:frontend-${BUILD_NUMBER}'
+                        }
+                    }
+                }
+                stage('Backend Image') {
+                    steps {
+                        dir('backend') {
+                            sh 'docker build -t backend:${BUILD_NUMBER} .'
+                            sh 'docker tag backend:${BUILD_NUMBER} ${ECR_REPOSITORY}:backend-${BUILD_NUMBER}'
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Push to ECR') {
+            steps {
+                sh 'aws ecr get-login-password | docker login --username AWS --password-stdin ${ECR_REPOSITORY}'
+                sh 'docker push ${ECR_REPOSITORY}:frontend-${BUILD_NUMBER}'
+                sh 'docker push ${ECR_REPOSITORY}:backend-${BUILD_NUMBER}'
+            }
+        }
+        
+        stage('Deploy to ECS') {
+            steps {
+                sh 'aws ecs update-service --cluster ${ECS_CLUSTER} --service ${FRONTEND_SERVICE} --force-new-deployment'
+                sh 'aws ecs update-service --cluster ${ECS_CLUSTER} --service ${BACKEND_SERVICE} --force-new-deployment'
+            }
+        }
+    }
+    
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
