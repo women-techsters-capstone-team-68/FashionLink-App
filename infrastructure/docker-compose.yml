@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    container_name: fashionlink-backend
+    restart: always
+    env_file:
+      - ./backend/.env
+    expose:
+      - "3000"
+    networks:
+      - fashionlink-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: fashionlink-frontend
+    restart: always
+    expose:
+      - "80"
+    networks:
+      - fashionlink-network
+
+  nginx:
+    image: nginx:latest
+    container_name: fashionlink-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - fashionlink-network
+
+networks:
+  fashionlink-network:
+    driver: bridge
