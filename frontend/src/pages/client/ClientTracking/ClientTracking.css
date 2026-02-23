@@ -1,0 +1,49 @@
+.tracking-container {
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 60px 25px;
+  min-height: 100vh;
+  background: #fff;
+}
+.track-header h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+.track-header p {
+  color: #666;
+  margin-bottom: 40px;
+}
+.track-input {
+  width: 100%;
+  padding: 18px;
+  border: 2px solid #eee;
+  border-radius: 12px;
+  font-size: 18px;
+  margin-bottom: 15px;
+  outline: none;
+}
+.track-input:focus {
+  border-color: #d4af37;
+}
+.track-btn {
+  width: 100%;
+  padding: 18px;
+  background: #d4af37;
+  color: #fff;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 16px;
+}
+.recent-check {
+  margin-top: 50px;
+  text-align: center;
+  border-top: 1px solid #eee;
+  padding-top: 30px;
+}
+.secondary-link {
+  background: none;
+  color: #d4af37;
+  font-weight: 600;
+  margin-top: 10px;
+  text-decoration: underline;
+}
