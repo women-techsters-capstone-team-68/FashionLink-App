@@ -24,8 +24,7 @@ The system uses supervised learning and anomaly detection techniques.
 
 ## 📊 2. Dataset
 
-The dataset used in this notebook is:
-
+The dataset used for this project is the fashionlink_dataset
 
 It contains information such as:
 - Client and artisan locations  
@@ -45,7 +44,6 @@ Several new features were created to improve model performance.
 ### 3.1 Location Matching
 
 A binary feature was created to show if the client and artisan are in the same location.
-
 
 This helps improve delivery prediction because distance affects logistics.
 
@@ -80,8 +78,6 @@ These improve the artisan recommendation process.
 Binary Classification
 
 ### Target Variable
-
-
 - 1 → Delivered on time  
 - 0 → Not delivered on time  
 
@@ -102,7 +98,6 @@ Examples of model features:
 5. Model evaluation  
 
 ### Data Split
-
 
 The dataset class distribution was also visualised to check balance.
 
@@ -161,8 +156,6 @@ The model flags:
 
 ### Output
 A new column:
-
-
 Values:
 - -1 → Anomaly  
 - 1 → Normal  
