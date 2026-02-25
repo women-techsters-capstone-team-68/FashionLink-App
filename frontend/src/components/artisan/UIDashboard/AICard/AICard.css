@@ -1,0 +1,74 @@
+/* ════════════════════════════════════════════════════════════════
+   AICard.css  —  prefix: ac-
+   ════════════════════════════════════════════════════════════════ */
+
+.ac {
+  background: #eeeeff;
+  border-radius: 18px;
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: fadeUp 0.5s ease 0.25s both;
+  height: 100%;
+  min-width: 0;
+}
+
+/* Header row: star + title + AI badge */
+.ac__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ac__star {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #6C63FF;
+}
+
+.ac__star .icon     { display: flex; align-items: center; }
+.ac__star .icon svg { width: 18px; height: 18px; }
+
+.ac__title {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.ac__badge {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: #6C63FF;
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 7px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+/* Body text */
+.ac__body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #4a506b;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.ac__body p { margin: 0; }
+
+/* xs */
+@media (max-width: 479px) {
+  .ac          { padding: 18px 20px; gap: 10px; }
+  .ac__title   { font-size: 0.9rem; }
+  .ac__body    { font-size: 0.82rem; }
+}

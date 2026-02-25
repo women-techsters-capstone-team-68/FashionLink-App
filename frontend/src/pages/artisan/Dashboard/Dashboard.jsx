@@ -1,23 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import FLCard from '../../../components/FLCard/FLCard';
-import './Dashboard.css';
+import { useState }     from "react";
+import { useNavigate }  from "react-router-dom";
+import StatCard    from "../../../components/artisan/UIDashboard/StatCard/StatCard.jsx";
+import AICard      from "../../../components/artisan/UIDashboard/AICard/AICard.jsx";
+import OrdersTable from "../../../components/artisan/UIDashboard/OrdersTable/OrdersTable.jsx";
+import Icon        from "../../../components/Icon.jsx";
+import { dashboardStats, upcomingOrders, aiAlerts } from "../../../data/mockData.js";
+import "./Dashboard.css";
 
-const Dashboard = () => {
+export default function Dashboard() {
+  const navigate = useNavigate();
+  const [orders] = useState(upcomingOrders);
+
   return (
-    <div className="dashboard">
-      <h1 className="h1">Dashboard</h1>
-      <div className="stats">
-        <div className="stat-card"><h3>Active</h3><p>12</p></div>
-        <div className="stat-card"><h3>Due</h3><p>3</p></div>
+    <div className="dash">
+      {/* Stat cards */}
+      <div className="dash__stats">
+        {dashboardStats.map((stat) => (
+          <StatCard key={stat.id} label={stat.label} value={stat.value} icon={stat.icon} variant={stat.variant} />
+        ))}
       </div>
-      <h2 className="h2">Recent Orders</h2>
-      <FLCard>
-        <div className="order-item">
-          <div><strong>Eduaina Ighalo</strong><p>Evening Gown</p></div>
-          <span className="tag">In Progress</span>
+
+      {/* AI cards + add button */}
+      <div className="dash__ai-row">
+        <AICard title="Deadline Risk Alert">
+          <p>{aiAlerts.deadlineRisk.summary}</p>
+        </AICard>
+
+        <div className="dash__ai-right">
+          <AICard title="Workload Summary">
+            <p>{aiAlerts.workloadSummary.summary}</p>
+          </AICard>
+
+          <button className="dash__add-btn" onClick={() => navigate("/artisan/add-order")}>
+            <Icon name="plus" />
+            Add New Order
+          </button>
         </div>
-      </FLCard>
+      </div>
+
+      {/* Orders table */}
+      <OrdersTable
+        orders={orders}
+        onView={(order) => navigate(`/artisan/orders/${order.id}`)}
+        onViewAll={() => navigate("/artisan/orders")}
+      />
     </div>
   );
-};
-export default Dashboard;
+}

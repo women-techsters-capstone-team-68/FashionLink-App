@@ -1,0 +1,195 @@
+/* ════════════════════════════════════════════════════════════════
+   SignupPage.css  —  prefix: sp-
+   ════════════════════════════════════════════════════════════════ */
+
+.sp {
+  min-height: 100vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-family: 'DM Sans', sans-serif;
+  background: #f5f6fa; /* Ensure background color matches */
+}
+
+.sp__panel {
+  position: relative;
+  background:
+    url("https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&h=1200&fit=crop&q=80")
+    center center / cover no-repeat;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: sticky; /* Keeps image in place while form scrolls on desktop */
+  top: 0;
+}
+
+.sp__panel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(10, 12, 30, 0.35) 0%,
+    rgba(10, 12, 30, 0.55) 50%,
+    rgba(10, 12, 30, 0.82) 100%
+  );
+  z-index: 1;
+}
+
+.sp__panel-logo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 32px;
+}
+
+.sp__panel-logo-text {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.sp__panel-content {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding: 0 36px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sp__quote {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.sp__quote-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.sp__features {
+  list-style: none;
+  margin: 0;
+  padding: 20px 24px;
+  background: rgba(15, 18, 48, 0.62);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sp__feature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.sp__feature-check {
+  display: flex;
+  color: #a5a0ff;
+}
+
+.sp__form-panel {
+  background: #f5f6fa;
+  display: flex;
+  align-items: flex-start; /* Changed from center to allow natural scrolling start */
+  justify-content: center;
+  padding: 64px 40px;
+  min-height: 100vh;
+}
+
+.sp__form-inner {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  animation: fadeUp 0.35s ease both;
+}
+
+.sp__title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.5rem, 2.8vw, 1.9rem);
+  font-weight: 800;
+  color: #1a1d2e;
+  margin: 0;
+}
+
+.sp__form { display: flex; flex-direction: column; gap: 20px; }
+.sp__role-section { display: flex; flex-direction: column; gap: 12px; }
+.sp__role-label { font-weight: 600; color: #1a1d2e; }
+.sp__role-group { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.sp__role-btn {
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1.5px solid #e2e5ee;
+  background: #fff;
+  font-weight: 600;
+  color: #8891aa;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.sp__role-btn--active {
+  border-color: #6C63FF;
+  background: #eeeeff;
+  color: #5750e8;
+}
+
+.sp__field { display: flex; flex-direction: column; gap: 8px; }
+.sp__label { font-size: 0.88rem; font-weight: 600; color: #1a1d2e; }
+
+.sp__input {
+  background: #fff;
+  border: 1.5px solid #e2e5ee;
+  border-radius: 12px;
+  padding: 14px 18px;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.sp__input:focus {
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+}
+
+.sp__submit {
+  background: #1a1d2e;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 17px 20px;
+  font-family: 'Sora', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.sp__switch { font-size: 0.88rem; color: #8891aa; text-align: center; }
+.sp__switch-link { color: #6C63FF; font-weight: 700; text-decoration: none; }
+
+@media (max-width: 900px) {
+  .sp { grid-template-columns: 1fr; }
+  .sp__panel { min-height: 380px; position: relative; }
+  .sp__form-panel { padding: 48px 24px; }
+}

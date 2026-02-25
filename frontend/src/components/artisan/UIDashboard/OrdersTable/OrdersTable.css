@@ -1,0 +1,218 @@
+/* ════════════════════════════════════════════════════════════════
+   OrdersTable.css  —  prefix: ot-
+   Dashboard "Upcoming Orders" widget.
+   Desktop: full table. Mobile (≤767px): stacked cards.
+   ════════════════════════════════════════════════════════════════ */
+
+.ot {
+  display: flex;
+  flex-direction: column;
+  animation: fadeUp 0.5s ease 0.3s both;
+  min-width: 0;
+}
+
+/* ── Section header ──────────────────────────────────────────── */
+.ot__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.ot__title {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0;
+}
+
+.ot__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  color: #6C63FF;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: gap 0.2s ease;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.ot__view-all:hover              { gap: 9px; }
+.ot__view-all .icon              { display: flex; align-items: center; }
+.ot__view-all .icon svg          { width: 14px; height: 14px; }
+
+/* ── Table wrapper ───────────────────────────────────────────── */
+.ot__table-wrap {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1.5px solid #e8eaf0;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* ── Table ───────────────────────────────────────────────────── */
+.ot__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'DM Sans', sans-serif;
+  table-layout: auto;
+}
+
+/* thead */
+.ot__table thead tr {
+  background: #f9fafb;
+  border-bottom: 1.5px solid #e8eaf0;
+}
+
+.ot__table th {
+  padding: 13px 18px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #8891aa;
+  text-align: left;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* tbody rows */
+.ot__row {
+  border-bottom: 1px solid #f0f2f8;
+  transition: background 0.15s ease;
+  animation: fadeUp 0.4s ease both;
+}
+
+.ot__row:last-child    { border-bottom: none; }
+.ot__row:hover         { background: #f9f9ff; }
+
+.ot__table td {
+  padding: 15px 18px;
+  font-size: 0.84rem;
+  color: #4a506b;
+  vertical-align: middle;
+}
+
+/* Cell variants */
+.ot__order-id {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  white-space: nowrap;
+}
+
+.ot__client {
+  font-weight: 600;
+  color: #2d3352;
+  white-space: nowrap;
+}
+
+.ot__desc {
+  max-width: 220px;
+  color: #6b7494;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Delivery cell */
+.ot__delivery {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  color: #5a6480;
+}
+
+.ot__delivery .icon         { display: flex; align-items: center; color: #aab0c8; }
+.ot__delivery .icon svg     { width: 14px; height: 14px; }
+
+/* View button */
+.ot__view-btn {
+  background: none;
+  border: none;
+  color: #6C63FF;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 8px;
+  transition: background 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+}
+
+.ot__view-btn:hover { background: #f0f0ff; }
+
+/* ── Mobile cards (hidden on desktop) ────────────────────────── */
+.ot__cards { display: none; }
+
+@media (max-width: 767px) {
+  /* Swap table for cards */
+  .ot__table-wrap { display: none; }
+
+  .ot__cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ot__card {
+    background: #fff;
+    border: 1.5px solid #e8eaf0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ot__card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .ot__card-client {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    color: #2d3352;
+    font-size: 0.88rem;
+    margin: 0;
+  }
+
+  .ot__card-desc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    color: #7c8db5;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+  }
+
+  .ot__card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #f0f2f8;
+    margin-top: 2px;
+  }
+}

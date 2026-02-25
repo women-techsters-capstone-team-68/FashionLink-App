@@ -1,0 +1,275 @@
+.ac {
+  display: flex;
+  justify-content: center;
+  padding: 0 16px 40px;
+}
+
+/* ── Card */
+.ac__card {
+  width: 100%;
+  max-width: 680px;
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 24px;
+  padding: 40px 44px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: fadeUp 0.3s ease both;
+}
+
+/* ── Header ─ */
+.ac__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.ac__title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 800;
+  color: #1a1d2e;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.ac__close {
+  background: none;
+  border: none;
+  color: #6b7494;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  transition: color 0.18s;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.ac__close:hover { color: #1a1d2e; }
+
+/* ── Form  */
+.ac__form {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.ac__field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Each field inside the group — borderless, separated by inner dividers */
+.ac__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 20px;
+  border-bottom: 1.5px solid #f0f2f8;
+  position: relative;
+}
+
+.ac__field:last-child { 
+  border-bottom: none; 
+}
+
+.ac__label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7494;
+  margin-bottom: 6px;
+}
+
+.ac__input {
+  background: none;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1d2e;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+
+.ac__input::placeholder { 
+  color: #b0b8d0; 
+}
+
+.ac__input:focus {
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+}
+
+/* ── Phone field */
+.ac__phone-wrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 10px;
+  background: #fff;
+  overflow: visible;
+  position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ac__phone-wrap:focus-within {
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+}
+
+.ac__country-selector { 
+  position: relative; 
+}
+
+.ac__country-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 13px 12px;
+  cursor: pointer;
+  color: #6b7494;
+  transition: background 0.15s;
+  border-radius: 0;
+}
+
+.ac__country-btn:hover { background: #f8f7ff; }
+
+.ac__country-flag { font-size: 1.1rem; }
+
+/* Dropdown */
+.ac__country-drop {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(26,29,46,0.12);
+  z-index: 100;
+  overflow: hidden;
+  min-width: 160px;
+}
+
+.ac__country-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 10px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #1a1d2e;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.ac__country-opt:hover { background: #f8f7ff; }
+.ac__country-opt--active { background: #eeeeff; color: #6C63FF; }
+
+.ac__country-name {
+  font-size: 0.75rem;
+  color: #8891aa;
+  margin-left: auto;
+}
+
+.ac__phone-divider {
+  width: 1px;
+  height: 24px;
+  background: #e8eaf0;
+  flex-shrink: 0;
+}
+
+.ac__phone-dial {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #6b7494;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.ac__phone-input {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 13px 14px 13px 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1d2e;
+  outline: none;
+  min-width: 0;
+}
+
+.ac__phone-input::placeholder { color: #b0b8d0; }
+
+/* ── Error ───────────────────────────────────────────────────── */
+.ac__error {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #ef4444;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin: -12px 0 0;
+}
+
+/* ── Actions ─────────────────────────────────────────────────── */
+.ac__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.ac__cancel {
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #8891aa;
+  cursor: pointer;
+  padding: 12px 20px;
+  border-radius: 12px;
+  transition: color 0.18s, background 0.18s;
+}
+
+.ac__cancel:hover { color: #4a506b; background: #f0f2f8; }
+
+.ac__submit {
+  background: #1a1d2e;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 32px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.ac__submit:hover { background: #2d3152; transform: translateY(-1px); }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .ac__card   { padding: 28px 22px 28px; border-radius: 18px; }
+  .ac__title  { font-size: 1.5rem; }
+}
