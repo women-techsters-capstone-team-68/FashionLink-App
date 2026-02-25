@@ -1,17 +1,53 @@
-:root {
-  --primary: #D4AF37;
-  --foreground: #1a1a1a;
-  --muted: #888888;
-  --bg: #fcfcfc;
-  --card: #ffffff;
-  --border: #eeeeee;
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { 
-  font-family: 'Inter', sans-serif; 
-  background: var(--bg); 
-  color: var(--foreground);
-  line-height: 1.5;
+/* Changed: Removed overflow: hidden from html/body to allow landing/signup to scroll */
+html, body,#root {
+   width: 100%;
+  min-height: 100%;
 }
-button { cursor: pointer; border: none; outline: none; }
+
+body {
+  font-family: "DM Sans", sans-serif;
+  background: #f5f6fa;
+  color: #1a1d2e;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* overflow-x is fine, but we let Y flow naturally */
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+ul, ol {
+  list-style: none;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

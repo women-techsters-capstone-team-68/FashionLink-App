@@ -1,73 +1,92 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { authApi } from '../api/authApi';
+/**
+ * AuthContext.jsx
+ * Lightweight mock auth layer.
+ * Swap mockLogin/mockSignup with real API calls when backend is ready.
+ *
+ * Stored in sessionStorage so refresh survives hot-reload but clears on tab close.
+ * Replace sessionStorage with secure httpOnly cookie / JWT flow for production.
+ */
+import { createContext, useContext, useState } from "react";
 
-// 1. We keep the context internal to this file to satisfy Fast Refresh
 const AuthContext = createContext(null);
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);
+/* ── Mock user store (simulate a database) ───────────────────── */
+const MOCK_USERS = [
+  { email: "artisan@demo.com", password: "password", role: "artisan", name: "Grace Adebayo" },
+  { email: "client@demo.com",  password: "password", role: "client",  name: "Amara Okonkwo" },
+];
 
-  const logout = useCallback(() => {
-    setToken(null);
+const ROLE_ROUTES = {
+  artisan: "/artisan/dashboard",
+  client:  "/client/dashboard",
+};
+
+function loadUser() {
+  try {
+    const raw = sessionStorage.getItem("fl_user");
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function saveUser(user) {
+  sessionStorage.setItem("fl_user", JSON.stringify(user));
+}
+
+function clearUser() {
+  sessionStorage.removeItem("fl_user");
+}
+
+/* ── Provider ────────────────────────────────────────────────── */
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(loadUser);
+
+  /**
+   * mockLogin — checks against MOCK_USERS list.
+   * Returns { ok: true, redirectTo } or { ok: false, error }
+   * TODO: replace body with: const res = await fetch("/api/auth/login", ...)
+   */
+  const login = ({ email, password }) => {
+    const found = MOCK_USERS.find(
+      (u) => u.email === email && u.password === password
+    );
+    if (!found) return { ok: false, error: "Invalid email or password." };
+    const session = { email: found.email, name: found.name, role: found.role };
+    saveUser(session);
+    setUser(session);
+    return { ok: true, redirectTo: ROLE_ROUTES[found.role] };
+  };
+
+  /**
+   * mockSignup — registers a new mock user in memory.
+   * Returns { ok: true, redirectTo } or { ok: false, error }
+   * TODO: replace body with: const res = await fetch("/api/auth/signup", ...)
+   */
+  const signup = ({ name, email, password, role }) => {
+    const exists = MOCK_USERS.find((u) => u.email === email);
+    if (exists) return { ok: false, error: "An account with this email already exists." };
+    const newUser = { email, password, role, name };
+    MOCK_USERS.push(newUser);
+    const session = { email, name, role };
+    saveUser(session);
+    setUser(session);
+    return { ok: true, redirectTo: ROLE_ROUTES[role] };
+  };
+
+  const logout = () => {
+    clearUser();
     setUser(null);
-    localStorage.removeItem('token');
-  }, []);
-
-  useEffect(() => {
-    const initAuth = async () => {
-      if (token) {
-        try {
-          const res = await authApi.me();
-          setUser(res.data.user);
-        } catch (err) {
-          logout(err);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
-    };
-    initAuth();
-  }, [token, logout]);
-
-  const login = async (email, password) => {
-    const res = await authApi.login(email, password);
-    const { token: t, user: u } = res.data;
-    setToken(t);
-    setUser(u);
-    localStorage.setItem('token', t);
   };
-
-  const signup = async (email, password, role) => {
-    await authApi.signup(email, password, role);
-  };
-
-  // 2. Memoize the value to prevent unnecessary re-renders
-  const value = useMemo(() => ({
-    user,
-    token,
-    login,
-    signup,
-    logout,
-    loading
-  }), [user, token, logout, loading]);
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, login, signup, logout, ROLE_ROUTES }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-// 3. Export the hook separately
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+/* ── Hook ────────────────────────────────────────────────────── */
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside <AuthProvider>");
+  return ctx;
+}
