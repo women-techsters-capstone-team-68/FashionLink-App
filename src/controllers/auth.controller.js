@@ -1,7 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { User } = require('../../models');
-const { JWT_SECRET } = require('../../config/express/env');
+
+// SECRET used for signing JWTs is loaded from environment variables.
+// the middleware already reads process.env.JWT_SECRET, so keep things consistent.
+const JWT_SECRET = process.env.JWT_SECRET;
 
 exports.register = async (req, res) => {
   try {

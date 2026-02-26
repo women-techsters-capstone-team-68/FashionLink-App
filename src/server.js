@@ -12,7 +12,20 @@ const startServer = async () => {
     // ==========================
     await sequelize.authenticate();
     console.log('✅ Database connected successfully');
+// 🔹 Sync database
+sequelize.sync({ alter: true }) // <-- this updates the DB with new columns
+  .then(() => {
+    console.log("Database synced successfully");
 
+    // Start the server AFTER DB is synced
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Unable to sync database:", err);
+  });
     // Optional: sync models (use carefully in production)
     // await sequelize.sync({ alter: false });
 

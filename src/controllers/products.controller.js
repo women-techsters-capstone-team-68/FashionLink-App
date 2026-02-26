@@ -1,4 +1,4 @@
-const { Product } = require('../../models');
+const { Product, User } = require('../../models');
 
 exports.createProduct = async (req, res) => {
   const product = await Product.create({ ...req.body, userId: req.user.id });
@@ -11,7 +11,7 @@ exports.getAllProducts = async (req, res) => {
 };
 
 exports.getProductById = async (req, res) => {
-  const product = await Product.findByPk(req.params.id, { include: 'user' });
+  const product = await Product.findByPk(req.params.id, { include: { model: User, as: 'user', attributes: ['id', 'name', 'email'] }});
   if (!product) return res.status(404).json({ message: 'Product not found' });
   res.json(product);
 };
