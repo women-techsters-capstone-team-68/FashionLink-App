@@ -1,9 +1,4 @@
-/**
- * ArtisanLayout.jsx
- * Shell for all artisan pages. Reads current path via useLocation
- * to highlight the correct sidebar item — no props needed.
- */
-import { useState }              from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar.jsx";
 import Header  from "./Header.jsx";
@@ -17,6 +12,8 @@ const PATH_TO_PAGE = {
   "/artisan/clients":        "clients",
   "/artisan/clients/add":    "clients",
   "/artisan/network":        "network",
+  "/artisan/network/:id":    "network",
+  "/artisan/coming-soon":    "network",
   "/artisan/notifications":  "notifications",
   "/artisan/settings":       "settings",
 };
@@ -38,7 +35,10 @@ const PAGE_META = {
   "/artisan/add-order":   { title: "New Order",      subtitle: "Create a new client order"  },
   "/artisan/clients":     { title: "Clients",        subtitle: "6 clients"                  },
   "/artisan/clients/add": { title: "Clients",        subtitle: "6 clients"                  },
-  "/artisan/network":     { title: "Artisan Network",subtitle: "Connect with other artisans"},
+  "/artisan/network":     { title: "Artisan Network", subtitle: "Discover skilled artisans to collaborate on your designs." },
+  "/artisan/coming-soon": { title: "Artisan Network", subtitle: "Discover skilled artisans to collaborate on your designs." },
+  "/artisan/notifications": { title: "Notifications", subtitle: "3 unread notifications" },
+  "/artisan/settings":      { title: "Settings",      subtitle: "Manage your account and preferences" },
 };
 
 export default function ArtisanLayout({ children }) {
@@ -49,8 +49,10 @@ export default function ArtisanLayout({ children }) {
   /* Derive sidebar active item and header meta from current path */
   const pathBase    = "/" + location.pathname.split("/").slice(1, 3).join("/");
   const activePage  = PATH_TO_PAGE[location.pathname] ?? PATH_TO_PAGE[pathBase] ?? "dashboard";
-  /* For client profile pages, highlight clients in sidebar */
-  const resolvedActive = location.pathname.startsWith("/artisan/clients") ? "clients" : activePage;
+  const resolvedActive =
+    location.pathname.startsWith("/artisan/clients") ? "clients"
+    : location.pathname.startsWith("/artisan/network") || location.pathname === "/artisan/coming-soon" ? "network"
+    : activePage;
   const meta        = PAGE_META[location.pathname] ?? PAGE_META[pathBase] ?? PAGE_META["/artisan/dashboard"];
 
   const handleNavigate = (pageId) => {

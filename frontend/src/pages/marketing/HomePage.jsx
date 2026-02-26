@@ -1,5 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import Image1 from "../../assets/homepageimages/Placeholder Image1.png";
+import Image2 from "../../assets/homepageimages/Placeholder Image2-1.png";
+import Image3 from "../../assets/homepageimages/Placeholder Image2-2.png";
+import Image4 from "../../assets/homepageimages/Placeholder Image2-3.png";
+import Image5 from "../../assets/homepageimages/Placeholder Image3.png";
+import Image6 from "../../assets/homepageimages/Placeholder Image4.png";
+import Image7 from "../../assets/homepageimages/Placeholder Image5.png";
+import Image8 from "../../assets/homepageimages/Placeholder Image6.png";
+import Image9 from "../../assets/homepageimages/Placeholder Image7.png";
 import "./HomePage.css";
 
 /* ── SVG icons ────────────────────────────────────────────────── */
@@ -133,7 +142,7 @@ export default function HomePage() {
           <div className="hp-hero__image-wrap">
             <img
               className="hp-hero__image"
-              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop&q=80"
+              src={Image1}
               alt="Artisan at work"
             />
           </div>
@@ -154,21 +163,21 @@ export default function HomePage() {
                 label: "Orders",
                 title: "Create and manage orders",
                 desc: "Build each project from intake to completion with full control",
-                img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=500&h=300&fit=crop&q=80",
+                img: Image2,
               },
               {
                 icon: <IconRuler />,
                 label: "Measurements",
                 title: "Validate measurements with precision",
                 desc: "AI catches errors before they become problems in production",
-                img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&h=300&fit=crop&q=80",
+                img: Image3,
               },
               {
                 icon: <IconUsers />,
                 label: "Client tracking",
                 title: "Keep clients informed and confident",
                 desc: "Share a simple tracking page so clients see status without asking",
-                img: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=500&h=300&fit=crop&q=80",
+                img: Image4,
               },
             ].map((c) => (
               <div className="hp-core__card" key={c.label}>
@@ -223,7 +232,7 @@ export default function HomePage() {
           <div className="hp-ai__image-wrap">
             <img
               className="hp-ai__image"
-              src="https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=700&h=560&fit=crop&q=80"
+              src={Image5}
               alt="AI insights"
             />
           </div>
@@ -236,7 +245,7 @@ export default function HomePage() {
           <div className="hp-track__image-wrap">
             <img
               className="hp-track__image"
-              src="https://images.unsplash.com/photo-1594938298603-a5e0b68a1a73?w=700&h=560&fit=crop&q=80"
+              src={Image6}
               alt="Client tracking"
             />
           </div>
@@ -278,7 +287,7 @@ export default function HomePage() {
           </div>
           <div className="hp-bento__right">
             <div className="hp-bento__image-tall">
-              <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=800&fit=crop&q=80" alt="Efficiency" />
+              <img src={Image7} alt="Efficiency" />
               <div className="hp-bento__image-label">
                 <p className="hp-bento__image-eyebrow">Learn</p>
                 <p className="hp-bento__image-tag">Organization</p>
@@ -296,7 +305,7 @@ export default function HomePage() {
         {/* Transparency row */}
         <div className="hp-bento__transparency">
           <div className="hp-bento__trans-image">
-            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&h=400&fit=crop&q=80" alt="Transparency" />
+            <img src={Image8} alt="Transparency" />
           </div>
           <div className="hp-bento__trans-text">
             <p className="hp-bento__eyebrow">Transparency</p>
@@ -365,7 +374,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="hp-cta__image-wrap">
-            <img src="https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=700&h=500&fit=crop&q=80" alt="Get started" />
+            <img src={Image9} alt="Get started" />
           </div>
         </div>
       </section>

@@ -1,0 +1,183 @@
+/* ════════════════════════════════════════════════════════════════
+   Notifications.css  —  prefix: nf-
+   ════════════════════════════════════════════════════════════════ */
+
+.nf {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Toolbar bar ─────────────────────────────────────────────── */
+.nf__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid #f0f2f8;
+}
+
+.nf__unread-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #4a506b;
+}
+
+.nf__mark-all {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6b7494;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.18s;
+}
+
+.nf__mark-all:hover { color: #6C63FF; }
+
+/* ── Notification list ───────────────────────────────────────── */
+.nf__list {
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+}
+
+/* ── Single row ──────────────────────────────────────────────── */
+.nf-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f2f8;
+  transition: background 0.15s;
+  position: relative;
+}
+
+.nf-row:last-child { border-bottom: none; }
+
+.nf-row:hover { background: #fafafa; }
+
+.nf-row--read { background: #fff; }
+
+.nf-row--read:hover { background: #f8f8f8; }
+
+/* Icon cell */
+.nf-row__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f5f4ff;
+  border: 1.5px solid #e8e6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Content */
+.nf-row__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nf-row__top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nf-row__title {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1d2e;
+}
+
+.nf-row--read .nf-row__title { font-weight: 600; color: #3a4060; }
+
+/* AI tag badge */
+.nf-row__tag {
+  background: #eeeeff;
+  color: #6C63FF;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.nf-row__body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #6b7494;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.nf-row--read .nf-row__body { color: #8891aa; }
+
+/* Mark as read button */
+.nf-row__mark-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6C63FF;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 2px;
+  transition: color 0.18s;
+}
+
+.nf-row__mark-read:hover { color: #5750e8; }
+
+/* Right: time + dot */
+.nf-row__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.nf-row__time {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: #aab0c8;
+  white-space: nowrap;
+}
+
+.nf-row__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #6C63FF;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .nf-row { padding: 16px 16px; gap: 12px; }
+  .nf__bar { padding: 12px 16px; }
+}

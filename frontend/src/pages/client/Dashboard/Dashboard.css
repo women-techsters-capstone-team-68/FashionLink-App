@@ -1,0 +1,265 @@
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard-content {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* SEARCH */
+.dashboard-search-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.dashboard-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-search-input {
+  width: 100%;
+  border: 1px solid #e8eaf0;
+  border-radius: 12px;
+  padding: 13px 16px 13px 42px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.dashboard-search-input:focus { border-color: #6b5ce7; }
+
+/* SECTION HEADERS */
+.dashboard-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.see-all-btn {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #6b5ce7;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* ARTISAN CARDS */
+.artisans-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.artisan-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.artisan-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.artisan-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.artisan-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.artisan-name-col { flex: 1; }
+
+.artisan-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1f36;
+}
+
+.artisan-specialty {
+  font-size: 12px;
+  color: #9a9ab0;
+}
+
+.artisan-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.artisan-badge.purple { background: #eef2ff; color: #6b5ce7; }
+.artisan-badge.teal { background: #e6faf5; color: #0ea87a; }
+
+.artisan-skills-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.artisan-skill {
+  font-size: 11px;
+  color: #555;
+  background: #f4f6fb;
+  border-radius: 8px;
+  padding: 6px 10px;
+  line-height: 1.4;
+}
+
+.artisan-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.artisan-location {
+  font-size: 12px;
+  color: #9a9ab0;
+}
+
+.artisan-rating {
+  font-size: 12px;
+  color: #9a9ab0;
+  font-weight: 600;
+}
+
+.artisan-experience {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1a1f36;
+}
+
+.artisan-bio {
+  font-size: 12px;
+  color: #777;
+  line-height: 1.5;
+}
+
+.artisan-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.view-profile-btn {
+  background: #1a1f36;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: background 0.15s;
+}
+
+.view-profile-btn:hover { background: #6b5ce7; }
+
+.message-artisan-btn {
+  background: #fff;
+  color: #1a1f36;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.15s;
+}
+
+.message-artisan-btn:hover { border-color: #6b5ce7; color: #6b5ce7; }
+
+/* ALL ORDERS */
+.dashboard-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 4px 22px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.all-orders-list { display: flex; flex-direction: column; }
+
+.all-order-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f2f8;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.all-order-item:last-child { border-bottom: none; }
+.all-order-item:hover { opacity: 0.7; }
+
+.all-order-left { flex: 1; }
+
+.all-order-id-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.order-id-text { font-size: 14px; font-weight: 700; color: #1a1f36; }
+.all-order-desc { font-size: 12px; color: #555; margin-bottom: 4px; line-height: 1.4; }
+.all-order-date { font-size: 12px; color: #9a9ab0; }
+.all-order-arrow { font-size: 16px; color: #9a9ab0; margin-left: 12px; }
+
+.badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.badge.inprogress { background: #fff3e0; color: #f59b00; }
+.badge.assigned { background: #eef2ff; color: #6b5ce7; }
+.badge.completed { background: #e8faf0; color: #22c55e; }
+.badge.delayed { background: #fff0f0; color: #e05252; }
+
+@media (max-width: 1024px) {
+  .artisans-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .dashboard-content { padding: 16px; }
+  .artisan-skills-row { grid-template-columns: 1fr; }
+}

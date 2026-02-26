@@ -1,0 +1,398 @@
+/* ════════════════════════════════════════════════════════════════
+   Settings.css  —  prefix: st-
+   Matches SETTINGS.png design.
+   ════════════════════════════════════════════════════════════════ */
+
+.st { display: flex; flex-direction: column; gap: 0; }
+
+.st__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 740px;
+}
+
+/* ── Generic card ────────────────────────────────────────────── */
+.st__card {
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 18px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.st__card-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0;
+}
+
+/* ── Profile row inside card ─────────────────────────────────── */
+.st__profile-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Avatar upload zone */
+.st__avatar-wrap {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  outline: none;
+}
+
+.st__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6C63FF, #a78bfa);
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #e8eaf0;
+  transition: border-color 0.2s;
+  position: relative;
+  z-index: 1;
+}
+
+.st__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Camera overlay on hover */
+.st__avatar-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(15, 17, 40, 0.54);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 2;
+}
+
+.st__avatar-wrap:hover .st__avatar-overlay,
+.st__avatar-wrap:focus .st__avatar-overlay { opacity: 1; }
+.st__avatar-wrap:hover .st__avatar         { border-color: #6C63FF; }
+
+.st__avatar-input {
+  display: none;
+}
+
+.st__profile-info { display: flex; flex-direction: column; gap: 3px; }
+
+.st__profile-name {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0;
+}
+
+.st__profile-role {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #8891aa;
+  margin: 0;
+}
+
+/* ── Field group (bordered card of fields) ───────────────────── */
+.st__field-group {
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 18px;
+  overflow: visible;
+}
+
+.st__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px 22px;
+  border-bottom: 1px solid #f0f2f8;
+}
+
+.st__field:last-child { border-bottom: none; }
+
+.st__label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b7494;
+  margin-bottom: 8px;
+}
+
+.st__input {
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1d2e;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.st__input::placeholder { color: #b0b8d0; }
+
+.st__input:focus {
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+}
+
+/* ── Phone field ─────────────────────────────────────────────── */
+.st__phone-wrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 10px;
+  overflow: visible;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.st__phone-wrap:focus-within {
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+}
+
+.st__dial-wrap { position: relative; }
+
+.st__dial-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  padding: 12px 10px;
+  cursor: pointer;
+  color: #6b7494;
+  transition: background 0.15s;
+  border-radius: 0;
+}
+
+.st__dial-btn:hover { background: #f8f7ff; }
+.st__dial-flag { font-size: 1.05rem; }
+
+.st__dial-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(26,29,46,0.12);
+  z-index: 100;
+  min-width: 160px;
+  overflow: hidden;
+}
+
+.st__dial-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 9px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: #1a1d2e;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-align: left;
+}
+
+.st__dial-opt:hover { background: #f8f7ff; }
+.st__dial-opt--active { background: #eeeeff; color: #6C63FF; }
+
+.st__dial-code { font-size: 0.72rem; color: #8891aa; margin-left: auto; }
+
+.st__phone-divider {
+  width: 1px;
+  height: 22px;
+  background: #e8eaf0;
+  flex-shrink: 0;
+}
+
+.st__dial-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #6b7494;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.st__phone-input {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 13px 12px 13px 4px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1d2e;
+  outline: none;
+  min-width: 0;
+}
+
+.st__phone-input::placeholder { color: #b0b8d0; }
+
+/* ── Country select field ────────────────────────────────────── */
+.st__field--select { border-bottom: none; }
+
+.st__select-wrap {
+  position: relative;
+}
+
+.st__select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 10px;
+  padding: 13px 40px 13px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #1a1d2e;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.st__select:focus {
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+}
+
+.st__select option[value=""] { color: #b0b8d0; }
+
+.st__select-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8891aa;
+  pointer-events: none;
+}
+
+/* ── Notification preference rows ───────────────────────────── */
+.st__pref-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 6px 0;
+  border-bottom: 1px solid #f5f6fa;
+}
+
+.st__pref-row:last-of-type { border-bottom: none; }
+
+.st__pref-text { flex: 1; }
+
+.st__pref-label {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0 0 3px;
+}
+
+.st__pref-desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #8891aa;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* ── Toggle switch ───────────────────────────────────────────── */
+.st-toggle {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  border-radius: 13px;
+  background: #d0d3e0;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.st-toggle--on { background: #1a1d2e; }
+
+.st-toggle__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.st-toggle--on .st-toggle__thumb { transform: translateX(20px); }
+
+/* ── Save row ────────────────────────────────────────────────── */
+.st__save-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.st__save-btn {
+  background: #6C63FF;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 32px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.st__save-btn:hover { background: #5750e8; transform: translateY(-1px); }
+
+.st__save-btn--saved {
+  background: #22c55e;
+  transform: none;
+}
+
+.st__save-btn--saved:hover {
+  background: #16a34a;
+  transform: none;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .st__card { padding: 18px 16px; }
+  .st__field { padding: 14px 16px; }
+}

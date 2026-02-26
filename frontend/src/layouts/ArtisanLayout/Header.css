@@ -1,3 +1,7 @@
+/* ════════════════════════════════════════════════════════════════
+   Header.css  —  uses header__ class names matching existing JSX
+   ════════════════════════════════════════════════════════════════ */
+
 .header {
   display: flex;
   align-items: center;
@@ -148,14 +152,16 @@
   overflow: hidden;
   cursor: pointer;
   border: 2px solid #e2e5ee;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   flex-shrink: 0;
+  padding: 0;
 }
 
-.header__avatar:hover { border-color: #6C63FF; }
+.header__avatar:hover { border-color: #6C63FF; box-shadow: 0 0 0 3px rgba(108,99,255,0.15); }
+.header__avatar-img   { width: 100%; height: 100%; object-fit: cover; display: block; }
 .header__avatar img   { width: 100%; height: 100%; object-fit: cover; }
 
-
+/* md: show hamburger */
 @media (max-width: 1023px) {
   .header { padding: 14px 20px; }
   .header__menu-btn { display: flex; }
@@ -163,7 +169,7 @@
   .header__search-input:focus { width: 170px; }
 }
 
-
+/* sm: hide search bar */
 @media (max-width: 767px) {
   .header { padding: 12px 16px; min-height: 56px; }
   .header__title { font-size: 1.1rem; }
@@ -171,7 +177,7 @@
   .header__right { gap: 8px; }
 }
 
-
+/* xs: hide subtitle */
 @media (max-width: 479px) {
   .header { padding: 10px 12px; min-height: 50px; gap: 8px; }
   .header__title { font-size: 1rem; }

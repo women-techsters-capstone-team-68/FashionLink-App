@@ -1,11 +1,3 @@
-/**
- * AuthContext.jsx
- * Lightweight mock auth layer.
- * Swap mockLogin/mockSignup with real API calls when backend is ready.
- *
- * Stored in sessionStorage so refresh survives hot-reload but clears on tab close.
- * Replace sessionStorage with secure httpOnly cookie / JWT flow for production.
- */
 import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
@@ -77,8 +69,14 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateProfile = (patch) => {
+    const updated = { ...user, ...patch };
+    saveUser(updated);
+    setUser(updated);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, ROLE_ROUTES }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, updateProfile, ROLE_ROUTES }}>
       {children}
     </AuthContext.Provider>
   );
