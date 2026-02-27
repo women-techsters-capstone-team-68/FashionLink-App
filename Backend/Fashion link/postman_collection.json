@@ -1,0 +1,917 @@
+{
+  "info": {
+    "name": "Fashion Link API",
+    "_postman_id": "fashion-link-api-collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "baseUrl", "value": "https://fashion-link-m2y7.onrender.com"},
+    {"key": "authToken", "value": ""},
+    {"key": "productId", "value": "1"},
+    {"key": "productDress", "value": "101"},
+    {"key": "productShoes", "value": "102"},
+    {"key": "productTShirt", "value": "103"},
+    {"key": "productJeans", "value": "104"},
+    {"key": "productSweater", "value": "105"}
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"FashionLink API running 🚀\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "description": "Roles: artisan, client, admin. Register and login return { token, user } (user has id, name, email, role; no password).",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"artisan\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": { "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"artisan\"\n}"}, "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] } },
+              "status": "Created",
+              "code": 201,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"Test User\",\n    \"email\": \"newuser@example.com\",\n    \"role\": \"artisan\",\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api", "auth", "register"] } },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Role must be \\\"artisan\\\", \\\"client\\\", or \\\"admin\\\"\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "var json = pm.response.json();",
+                  "if(json && (json.token || json.accessToken)){ var t = json.token || json.accessToken; pm.environment.set('authToken', t); pm.test('Saved authToken', function(){pm.expect(pm.environment.get('authToken')).to.be.a('string');}); }"
+                ]
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}], "body": {"mode": "raw", "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"}, "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"user@example.com\",\n    \"role\": \"artisan\",\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n}\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Incorrect password\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] } },
+              "status": "Not Found",
+              "code": 404,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"User not found\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}], "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"role\": \"artisan\",\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n]"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/users", "host": ["{{baseUrl}}"], "path": ["api", "users"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"role\": \"artisan\",\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/users/999", "host": ["{{baseUrl}}"], "path": ["api", "users", "999"] } },
+              "status": "Not Found",
+              "code": 404,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"User not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Updated Name\",\n  \"role\": \"admin\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"User updated successfully\",\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"Updated Name\",\n    \"email\": \"john@example.com\",\n    \"role\": \"admin\",\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"User deleted successfully\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/users/1", "host": ["{{baseUrl}}"], "path": ["api", "users", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productName\": \"Classic T-Shirt\",\n  \"brand\": \"FashionLink\",\n  \"category\": \"Tops\",\n  \"price\": 29.99,\n  \"colour\": \"Blue\",\n  \"size\": \"M\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] } },
+              "status": "Created",
+              "code": 201,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"productName\": \"Classic T-Shirt\",\n  \"brand\": \"FashionLink\",\n  \"category\": \"Tops\",\n  \"price\": \"29.99\",\n  \"colour\": \"Blue\",\n  \"size\": \"M\",\n  \"userId\": 1,\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "[\n  {\n    \"id\": 1,\n    \"productName\": \"Classic T-Shirt\",\n    \"brand\": \"FashionLink\",\n    \"category\": \"Tops\",\n    \"price\": \"29.99\",\n    \"colour\": \"Blue\",\n    \"size\": \"M\",\n    \"userId\": 1,\n    \"user\": {\n      \"id\": 1,\n      \"name\": \"John Doe\",\n      \"email\": \"john@example.com\"\n    },\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n]"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/products", "host": ["{{baseUrl}}"], "path": ["api", "products"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"productName\": \"Classic T-Shirt\",\n  \"brand\": \"FashionLink\",\n  \"category\": \"Tops\",\n  \"price\": \"29.99\",\n  \"colour\": \"Blue\",\n  \"size\": \"M\",\n  \"userId\": 1,\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\"\n  },\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/products/999", "host": ["{{baseUrl}}"], "path": ["api", "products", "999"] } },
+              "status": "Not Found",
+              "code": 404,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Product not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Product",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"productName\": \"Updated T-Shirt\",\n  \"price\": 34.99\n}" },
+            "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Product updated successfully\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Product",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Product deleted successfully\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/products/1", "host": ["{{baseUrl}}"], "path": ["api", "products", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Clients",
+      "item": [
+        {
+          "name": "Create Client",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Jane Client\",\n  \"email\": \"jane@example.com\",\n  \"measurements\": {}\n}" },
+            "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api", "clients"] }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api", "clients"] } },
+              "status": "Created",
+              "code": 201,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"client\": {\n    \"id\": 1,\n    \"name\": \"Jane Client\",\n    \"email\": \"jane@example.com\",\n    \"designerId\": 1,\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  },\n  \"avatarUrl\": \"https://api.dicebear.com/...\",\n  \"recommendations\": []\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api", "clients"] } },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Validation error\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Clients",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api", "clients"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api", "clients"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "[\n  {\n    \"id\": 1,\n    \"name\": \"Jane Client\",\n    \"email\": \"jane@example.com\",\n    \"designerId\": 1,\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n]"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clients", "host": ["{{baseUrl}}"], "path": ["api", "clients"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Client by ID",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/clients/1", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clients/1", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Jane Client\",\n  \"email\": \"jane@example.com\",\n  \"designerId\": 1,\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/clients/999", "host": ["{{baseUrl}}"], "path": ["api", "clients", "999"] } },
+              "status": "Not Found",
+              "code": 404,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Client not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Client",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Jane Updated\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/clients/1", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/clients/1", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"Jane Updated\",\n  \"email\": \"jane@example.com\",\n  \"designerId\": 1,\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/clients/999", "host": ["{{baseUrl}}"], "path": ["api", "clients", "999"] } },
+              "status": "Not Found",
+              "code": 404,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Client not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Client",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/clients/1", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/clients/1", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Client deleted\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/clients/1", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Client Measurement",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"chest\": 38,\n  \"waist\": 32,\n  \"hips\": 40\n}" },
+            "url": { "raw": "{{baseUrl}}/api/clients/1/measurements", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1", "measurements"] }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/clients/1/measurements", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1", "measurements"] } },
+              "status": "Created",
+              "code": 201,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"measurement\": {\n    \"id\": 1,\n    \"ClientId\": 1,\n    \"chest\": 38,\n    \"waist\": 32,\n    \"hips\": 40,\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  },\n  \"avatarUrl\": \"https://api.dicebear.com/...\",\n  \"recommendations\": []\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/clients/1/measurements", "host": ["{{baseUrl}}"], "path": ["api", "clients", "1", "measurements"] } },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Invalid measurement data\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "description": "Order CRUD. Style reference image is not persisted (no storage). Use clientId, deliveryDate, description, notes, measurements (chest, waist, hip, shoulder, sleeve, length).",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"clientId\": 1,\n  \"deliveryDate\": \"2025-03-15\",\n  \"description\": \"Bespoke blazer, wool blend\",\n  \"notes\": \"Rush order\",\n  \"chest\": 40,\n  \"waist\": 32,\n  \"hip\": 42,\n  \"shoulder\": 18,\n  \"sleeve\": 24,\n  \"length\": 30\n}" },
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] } },
+              "status": "Created",
+              "code": 201,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"UserId\": 1,\n  \"ClientId\": 1,\n  \"order_number\": \"ORD-001\",\n  \"status\": \"pending\",\n  \"notes\": \"Rush order\",\n  \"delivery_date\": \"2025-03-15\",\n  \"description\": \"Bespoke blazer, wool blend\",\n  \"styleReferenceImageUrl\": null,\n  \"chest\": 40,\n  \"waist\": 32,\n  \"hip\": 42,\n  \"shoulder\": 18,\n  \"sleeve\": 24,\n  \"length\": 30,\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Orders",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "[\n  {\n    \"id\": 1,\n    \"UserId\": 1,\n    \"ClientId\": 1,\n    \"order_number\": \"ORD-001\",\n    \"status\": \"pending\",\n    \"notes\": \"Rush order\",\n    \"delivery_date\": \"2025-03-15\",\n    \"description\": \"Bespoke blazer, wool blend\",\n    \"styleReferenceImageUrl\": null,\n    \"chest\": 40,\n    \"waist\": 32,\n    \"hip\": 42,\n    \"shoulder\": 18,\n    \"sleeve\": 24,\n    \"length\": 30,\n    \"tasks\": [],\n    \"client\": { \"id\": 1, \"fullName\": \"Jane Client\", \"email\": \"jane@example.com\", \"phone\": null },\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n]"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"UserId\": 1,\n  \"ClientId\": 1,\n  \"order_number\": \"ORD-001\",\n  \"status\": \"pending\",\n  \"notes\": \"Rush order\",\n  \"delivery_date\": \"2025-03-15\",\n  \"description\": \"Bespoke blazer, wool blend\",\n  \"styleReferenceImageUrl\": null,\n  \"chest\": 40,\n  \"waist\": 32,\n  \"hip\": 42,\n  \"shoulder\": 18,\n  \"sleeve\": 24,\n  \"length\": 30,\n  \"tasks\": [],\n  \"client\": { \"id\": 1, \"fullName\": \"Jane Client\", \"email\": \"jane@example.com\", \"phone\": null },\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/orders/999", "host": ["{{baseUrl}}"], "path": ["api", "orders", "999"] } },
+              "status": "Not Found",
+              "code": 404,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Order not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Order",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"in_progress\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Order updated successfully\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Order",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Order deleted successfully\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Assign Task to Order",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Cut fabric\",\n  \"description\": \"Cut pattern pieces\",\n  \"assignedTo\": 1\n}" },
+            "url": { "raw": "{{baseUrl}}/api/orders/1/tasks", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1", "tasks"] }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/orders/1/tasks", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1", "tasks"] } },
+              "status": "Created",
+              "code": 201,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"OrderId\": 1,\n  \"title\": \"Cut fabric\",\n  \"description\": \"Cut pattern pieces\",\n  \"assignedTo\": 1,\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/orders/1/tasks", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1", "tasks"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Artisans",
+      "item": [
+        {
+          "name": "Create Artisan Profile",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"specialty\": \"Tailoring\",\n  \"location\": \"Lagos\",\n  \"bio\": \"Experienced tailor\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/artisans", "host": ["{{baseUrl}}"], "path": ["api", "artisans"] }
+          },
+          "response": [
+            {
+              "name": "201 Created",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/artisans", "host": ["{{baseUrl}}"], "path": ["api", "artisans"] } },
+              "status": "Created",
+              "code": 201,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"UserId\": 1,\n  \"specialty\": \"Tailoring\",\n  \"location\": \"Lagos\",\n  \"bio\": \"Experienced tailor\",\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/artisans", "host": ["{{baseUrl}}"], "path": ["api", "artisans"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Artisans",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/artisans", "host": ["{{baseUrl}}"], "path": ["api", "artisans"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/artisans", "host": ["{{baseUrl}}"], "path": ["api", "artisans"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "[\n  {\n    \"id\": 1,\n    \"UserId\": 1,\n    \"specialty\": \"Tailoring\",\n    \"location\": \"Lagos\",\n    \"bio\": \"Experienced tailor\",\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n]"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/artisans", "host": ["{{baseUrl}}"], "path": ["api", "artisans"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Artisan by ID",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/artisans/1", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/artisans/1", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"id\": 1,\n  \"UserId\": 1,\n  \"specialty\": \"Tailoring\",\n  \"location\": \"Lagos\",\n  \"bio\": \"Experienced tailor\",\n  \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n  \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/artisans/999", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "999"] } },
+              "status": "Not Found",
+              "code": 404,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Artisan not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Artisan Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "body": { "mode": "raw", "raw": "{\n  \"specialty\": \"Bespoke Tailoring\",\n  \"bio\": \"Updated bio\"\n}" },
+            "url": { "raw": "{{baseUrl}}/api/artisans/1", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/artisans/1", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Artisan updated successfully\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "PATCH", "url": { "raw": "{{baseUrl}}/api/artisans/1", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Artisan Profile",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": { "raw": "{{baseUrl}}/api/artisans/1", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "1"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/artisans/1", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "1"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Artisan deleted successfully\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "originalRequest": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/artisans/1", "host": ["{{baseUrl}}"], "path": ["api", "artisans", "1"] } },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Authentication required\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Search Artisans",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": {
+              "raw": "{{baseUrl}}/api/search/artisans?specialty=Tailoring&location=Lagos",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "search", "artisans"],
+              "query": [
+                {"key": "specialty", "value": "Tailoring"},
+                {"key": "location", "value": "Lagos"}
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/search/artisans?specialty=Tailoring&location=Lagos", "host": ["{{baseUrl}}"], "path": ["api", "search", "artisans"], "query": [{"key": "specialty", "value": "Tailoring"}, {"key": "location", "value": "Lagos"}] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "[\n  {\n    \"id\": 1,\n    \"UserId\": 1,\n    \"specialty\": \"Tailoring\",\n    \"location\": \"Lagos\",\n    \"bio\": \"Experienced tailor\"\n  }\n]"
+            },
+            {
+              "name": "500 Server Error",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/search/artisans", "host": ["{{baseUrl}}"], "path": ["api", "search", "artisans"] } },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Internal server error\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Search Products",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
+            "url": {
+              "raw": "{{baseUrl}}/api/search/products?name=T-Shirt&category=Tops",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "search", "products"],
+              "query": [
+                {"key": "name", "value": "T-Shirt"},
+                {"key": "category", "value": "Tops"}
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/search/products?name=T-Shirt&category=Tops", "host": ["{{baseUrl}}"], "path": ["api", "search", "products"], "query": [{"key": "name", "value": "T-Shirt"}, {"key": "category", "value": "Tops"}] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "[\n  {\n    \"id\": 1,\n    \"productName\": \"Classic T-Shirt\",\n    \"brand\": \"FashionLink\",\n    \"category\": \"Tops\",\n    \"price\": \"29.99\",\n    \"colour\": \"Blue\",\n    \"size\": \"M\"\n  }\n]"
+            },
+            {
+              "name": "500 Server Error",
+              "originalRequest": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/search/products", "host": ["{{baseUrl}}"], "path": ["api", "search", "products"] } },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Internal server error\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
