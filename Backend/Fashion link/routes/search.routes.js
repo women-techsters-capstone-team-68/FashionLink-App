@@ -1,12 +1,12 @@
 const express = require('express');
-const router = express.Router();
+const routere = express.Router();
 const searchController = require('../src/controllers/search.controller');
 const authMiddleware = require('../src/middlewares/auth.middleware');
+const roleMiddleware = require('../src/middlewares/role.middleware');
 
-// Artisan search (by specialty, location, rating, etc.)
-router.get('/artisans', authMiddleware, searchController.searchArtisans);
+// Search (artisan, client, admin for browsing)
+const searchRoles = [authMiddleware, roleMiddleware(['artisan', 'client', 'admin'])];
+routere.get('/artisans', searchRoles, searchController.searchArtisans);
+routere.get('/products', searchRoles, searchController.searchProducts);
 
-// Product search
-router.get('/products', authMiddleware, searchController.searchProducts);
-
-module.exports = router;
+module.exports = routere;

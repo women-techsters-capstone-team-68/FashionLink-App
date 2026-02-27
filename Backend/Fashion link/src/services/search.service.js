@@ -4,19 +4,20 @@ const { Op } = require('sequelize');
 
 module.exports = {
   searchArtisans: async ({ specialty, location }) => {
-    /**
-     * Example of advanced search logic:
-     *  - Specialty matching
-     *  - Location proximity (optional)
-     *  - Rating prioritization
-     */
+    const where = {};
+    if (specialty) {
+      where[Op.or] = [
+        { role: { [Op.like]: `%${specialty}%` } },
+        { category: { [Op.like]: `%${specialty}%` } }
+      ];
+    }
+    if (location) {
+      where.location = { [Op.like]: `%${location}%` };
+    }
 
     const artisans = await ArtisanProfile.findAll({
-      where: {
-        specialties: { [Op.like]: `%${specialty || ''}%` },
-        location: { [Op.like]: `%${location || ''}%` }
-      },
-      order: [['rating', 'DESC']] // highest rated first
+      where: Object.keys(where).length ? where : undefined,
+      order: [['rating', 'DESC']]
     });
 
     return artisans;
