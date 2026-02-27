@@ -3,11 +3,17 @@ const path = require('path');
 const newman = require('newman');
 
 const collectionPath = path.join(__dirname, '..', 'postman_collection.json');
-const envPath = path.join(__dirname, '..', 'postman_environment.json');
 const dataPath = path.join(__dirname, '..', 'products_data.json');
 
 function loadJson(p) {
   return JSON.parse(fs.readFileSync(p, 'utf8'));
+}
+
+function getEnvFromCollection(collection) {
+  const vars = collection.variable || [];
+  return {
+    values: vars.map((v) => ({ key: v.key, value: v.value || '', enabled: true }))
+  };
 }
 
 function clone(obj) {
@@ -31,7 +37,9 @@ function setEnvValue(envObj, key, value) {
 
 async function runAll() {
   const collection = loadJson(collectionPath);
-  const baseEnv = loadJson(envPath);
+  const baseEnv = (collection.variable && collection.variable.length)
+    ? getEnvFromCollection(collection)
+    : { values: [] };
   const data = loadJson(dataPath);
 
   for (const entry of data) {

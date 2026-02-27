@@ -17,11 +17,21 @@ exports.getArtisanById = async (req, res) => {
 };
 
 exports.updateArtisanProfile = async (req, res) => {
-  await ArtisanProfile.update(req.body, { where: { id: req.params.id } });
-  res.json({ message: 'Artisan updated successfully' });
+  const profile = await ArtisanProfile.findByPk(req.params.id);
+  if (!profile) return res.status(404).json({ message: 'Artisan not found' });
+  if (req.user.role !== 'admin' && profile.UserId !== req.user.id) {
+    return res.status(403).json({ message: 'You can only update your own profile' });
+  }
+  await profile.update(req.body);
+  res.json(profile);
 };
 
 exports.deleteArtisanProfile = async (req, res) => {
-  await ArtisanProfile.destroy({ where: { id: req.params.id } });
+  const profile = await ArtisanProfile.findByPk(req.params.id);
+  if (!profile) return res.status(404).json({ message: 'Artisan not found' });
+  if (req.user.role !== 'admin' && profile.UserId !== req.user.id) {
+    return res.status(403).json({ message: 'You can only delete your own profile' });
+  }
+  await profile.destroy();
   res.json({ message: 'Artisan deleted successfully' });
 };

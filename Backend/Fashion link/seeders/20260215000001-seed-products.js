@@ -3,12 +3,14 @@
 /** @type {import('sequelize-cli').Seeder} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    /**
-     * Add seed commands here.
-     */
+    const [users] = await queryInterface.sequelize.query(
+      "SELECT id FROM users ORDER BY id LIMIT 1"
+    );
+    const userId = users[0]?.id ?? 1;
+
     const now = new Date();
-    
-    await queryInterface.bulkInsert('Products', [
+
+    await queryInterface.bulkInsert('products', [
       // Dress products
       {
         productName: 'Dress',
@@ -17,6 +19,7 @@ module.exports = {
         price: 52.00,
         colour: 'Black',
         size: 'M',
+        userId,
         createdAt: now,
         updatedAt: now
       },
@@ -27,6 +30,7 @@ module.exports = {
         price: 130.00,
         colour: 'Red',
         size: 'S',
+        userId,
         createdAt: now,
         updatedAt: now
       },
@@ -38,6 +42,7 @@ module.exports = {
         price: 82.00,
         colour: 'White',
         size: 'L',
+        userId,
         createdAt: now,
         updatedAt: now
       },
@@ -48,10 +53,10 @@ module.exports = {
         price: 40.00,
         colour: 'Blue',
         size: 'XL',
+        userId,
         createdAt: now,
         updatedAt: now
       },
-      // T-shirt products
       {
         productName: 'T-shirt',
         brand: 'H&M',
@@ -59,6 +64,7 @@ module.exports = {
         price: 33.00,
         colour: 'Green',
         size: 'L',
+        userId,
         createdAt: now,
         updatedAt: now
       },
@@ -69,10 +75,10 @@ module.exports = {
         price: 40.00,
         colour: 'Yellow',
         size: 'M',
+        userId,
         createdAt: now,
         updatedAt: now
       },
-      // Jeans products
       {
         productName: 'Jeans',
         brand: 'Zara',
@@ -80,6 +86,7 @@ module.exports = {
         price: 70.00,
         colour: 'Black',
         size: 'L',
+        userId,
         createdAt: now,
         updatedAt: now
       },
@@ -90,10 +97,10 @@ module.exports = {
         price: 52.00,
         colour: 'Blue',
         size: 'S',
+        userId,
         createdAt: now,
         updatedAt: now
       },
-      // Sweater products
       {
         productName: 'Sweater',
         brand: 'Gucci',
@@ -101,6 +108,7 @@ module.exports = {
         price: 82.00,
         colour: 'White',
         size: 'XL',
+        userId,
         createdAt: now,
         updatedAt: now
       },
@@ -111,6 +119,7 @@ module.exports = {
         price: 70.00,
         colour: 'Red',
         size: 'L',
+        userId,
         createdAt: now,
         updatedAt: now
       }
@@ -121,6 +130,6 @@ module.exports = {
     /**
      * Add commands to revert seed here.
      */
-    await queryInterface.bulkDelete('Products', null, {});
+    await queryInterface.bulkDelete('products', null, {});
   }
 };

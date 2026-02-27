@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../../models');
 
+const JWT_SECRET = process.env.JWT_SECRET; // Ensure this is set in your .env file
+
 module.exports = async (req, res, next) => {
   try {
     // Expect header: Authorization: Bearer TOKEN
