@@ -53,21 +53,38 @@ exports.createOrder = async (req, res) => {
 
 exports.getAllOrders = async (req, res) => {
   try {
-    const { status: statusFilter, mine } = req.query;
-    const where = {};
+    const { status: statusFilter, mine, search } = req.query;
+    const andConditions = [];
 
     if (req.user.role === 'artisan' || req.user.role === 'admin') {
-      where.UserId = req.user.id;
+      andConditions.push({ UserId: req.user.id });
     } else if (req.user.role === 'client' || mine === '1') {
       const clientIds = await Client.findAll({
         where: { userId: req.user.id },
         attributes: ['id']
       }).then(rows => rows.map(r => r.id));
       if (clientIds.length === 0) return res.json([]);
-      where.ClientId = { [Op.in]: clientIds };
+      andConditions.push({ ClientId: { [Op.in]: clientIds } });
     }
 
-    if (statusFilter) where.status = statusFilter;
+    if (statusFilter) andConditions.push({ status: statusFilter });
+
+    if (search && String(search).trim()) {
+      const term = `%${String(search).trim()}%`;
+      const searchOr = [
+        { order_number: { [Op.like]: term } },
+        { description: { [Op.like]: term } }
+      ];
+      const clientsByName = await Client.findAll({
+        where: { fullName: { [Op.like]: term } },
+        attributes: ['id']
+      });
+      const ids = clientsByName.map(c => c.id);
+      if (ids.length) searchOr.push({ ClientId: { [Op.in]: ids } });
+      andConditions.push({ [Op.or]: searchOr });
+    }
+
+    const where = andConditions.length ? { [Op.and]: andConditions } : {};
 
     const orders = await Order.findAll({
       where,
@@ -108,14 +125,37 @@ exports.getOrderById = async (req, res) => {
   }
 };
 
+const ALLOWED_ORDER_UPDATE_FIELDS = [
+  'status', 'notes', 'shipping_address', 'delivery_date', 'description',
+  'chest', 'waist', 'hip', 'shoulder', 'sleeve', 'length', 'total_amount'
+];
+
+function buildOrderUpdatePayload(body) {
+  const payload = {};
+  for (const key of ALLOWED_ORDER_UPDATE_FIELDS) {
+    if (body[key] !== undefined) payload[key] = body[key];
+  }
+  if (body.deliveryDate !== undefined) payload.delivery_date = body.deliveryDate;
+  return payload;
+}
+
 exports.updateOrder = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) return res.status(400).json({ message: 'Invalid order id' });
-    const { styleReferenceImageUrl, ...rest } = req.body;
-    const [affectedCount] = await Order.update(rest, { where: { id } });
+    const updates = buildOrderUpdatePayload(req.body);
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No valid fields to update' });
+    }
+    const [affectedCount] = await Order.update(updates, { where: { id } });
     if (affectedCount === 0) return res.status(404).json({ message: 'Order not found' });
-    res.json({ message: 'Order updated successfully' });
+    const order = await Order.findByPk(id, {
+      include: [
+        { model: Task, as: 'tasks', required: false },
+        { model: Client, as: 'client', attributes: ['id', 'fullName', 'email', 'phone'], required: false }
+      ]
+    });
+    res.json({ message: 'Order updated successfully', order });
   } catch (err) {
     console.error('updateOrder error:', err);
     res.status(500).json({ message: err.message || 'Failed to update order' });

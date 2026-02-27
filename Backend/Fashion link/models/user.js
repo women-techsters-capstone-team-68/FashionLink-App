@@ -19,10 +19,6 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isIn: [['artisan', 'client', 'admin']]
       }
-    },
-    avatarUrl: {
-      type: DataTypes.STRING,
-      allowNull: true
     }
   }, {
     tableName: 'users',

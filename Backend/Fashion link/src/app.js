@@ -10,7 +10,7 @@ const dashboardRoutes = require('../routes/dashboard.routes');
 const userRoutes = require('../routes/users.routes');
 const productRoutes = require('../routes/products.routes');
 const searchRoutes = require('../routes/search.routes');
-
+const aiRoutes = require('../routes/ai.routes');
 
 const app = express();
 
@@ -28,6 +28,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/ai', aiRoutes);
 app.get('/', (_, res) => {
   res.json({ message: 'FashionLink API running 🚀' });
 });
