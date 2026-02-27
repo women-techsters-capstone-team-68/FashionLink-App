@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap");
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Original global settings - Don't touch these */
+html, body, #root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Sora", sans-serif;
+  background: #f5f6fa;
+  color: #1a1d2e;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── ISOLATED CLIENT PORTAL STYLES ── */
+/* These only trigger when the ClientPage wrapper is active */
+
+.client-portal-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100vh; /* Keeps it contained to the screen */
+  background: #f4f6fb;
+  overflow: hidden; 
+  position: fixed; /* Ensures it starts at the top (Fixes 100vh glitch) */
+  top: 0;
+  left: 0;
+}
+
+.client-main-content {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  background: #f4f6fb;
+  position: relative;
+}
+
+/* ── Original Global Assets ── */
+img { max-width: 100%; display: block; }
+ul, ol { list-style: none; }
+button { font: inherit; cursor: pointer; }
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}

@@ -1,0 +1,84 @@
+/* ════════════════════════════════════════════════════════════════
+   StatCard.css  —  prefix: sc-
+   ════════════════════════════════════════════════════════════════ */
+
+.sc {
+  background: #ffffff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 18px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: default;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeUp 0.4s ease both;
+  min-width: 0;
+}
+
+.sc:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(108, 99, 255, 0.1);
+}
+
+/* stagger siblings */
+.sc:nth-child(1) { animation-delay: 0.05s; }
+.sc:nth-child(2) { animation-delay: 0.10s; }
+.sc:nth-child(3) { animation-delay: 0.15s; }
+.sc:nth-child(4) { animation-delay: 0.20s; }
+
+/* Top row: big number + icon */
+.sc__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sc__value {
+  font-family: 'Sora', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1a1d2e;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* Icon bubble */
+.sc__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.sc__icon .icon      { display: flex; align-items: center; }
+.sc__icon .icon svg  { width: 20px; height: 20px; }
+
+/* Colour variants */
+.sc--default .sc__icon { background: #ededff; color: #6C63FF; }
+.sc--warning .sc__icon { background: #fff8ec; color: #f59e0b; }
+.sc--success .sc__icon { background: #ecfdf5; color: #10b981; }
+.sc--danger  .sc__icon { background: #fef2f2; color: #ef4444; }
+
+/* Label */
+.sc__label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #8891aa;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* xs */
+@media (max-width: 479px) {
+  .sc           { padding: 16px 16px; gap: 8px; }
+  .sc__value    { font-size: 1.7rem; }
+  .sc__icon     { width: 34px; height: 34px; border-radius: 10px; }
+  .sc__icon .icon svg { width: 16px; height: 16px; }
+  .sc__label    { font-size: 0.76rem; }
+}

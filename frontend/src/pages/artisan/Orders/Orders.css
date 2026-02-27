@@ -1,0 +1,323 @@
+/* ═══════════════════════════════════════════════════════════════
+   FILE: src/pages/artisan/Orders/Orders.css
+   Scope prefix: op-  (Orders Page)
+   Rule: NOTHING here targets elements outside .op
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Page shell ─────────────────────────────────────────────── */
+.op {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  /* No fixed height — parent (main-content) handles scroll */
+  animation: op-enter 0.3s ease both;
+}
+
+@keyframes op-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TOOLBAR  (search · filter · add)
+══════════════════════════════════════════════════════════════ */
+.op__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Search ─────────────────────────────────────────────────── */
+.op__search-wrap {
+  flex: 1;
+  min-width: 180px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid #e2e5ee;
+  border-radius: 10px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.op__search-wrap:focus-within {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+}
+
+/* Explicit icon size */
+.op__search-icon {
+  width: 16px;
+  height: 16px;
+  color: #aab0c8;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.op__search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 10px 10px 10px 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #1a1d2e;
+  min-width: 0;
+}
+
+.op__search-input::placeholder {
+  color: #b0b8d0;
+}
+
+/* Clear button */
+.op__search-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: #aab0c8;
+  cursor: pointer;
+  margin-right: 6px;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.op__search-clear:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* Explicit icon size */
+.op__search-clear-icon {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── Toolbar actions ────────────────────────────────────────── */
+.op__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Add Order button */
+.op__add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  background: #6c63ff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+  box-shadow: 0 4px 14px rgba(108, 99, 255, 0.28);
+  white-space: nowrap;
+}
+
+.op__add-btn:hover {
+  background: #5750e8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(108, 99, 255, 0.36);
+}
+
+/* Explicit icon size */
+.op__add-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   STATUS TABS
+══════════════════════════════════════════════════════════════ */
+.op__tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  /* Hide scrollbar on mobile while keeping scroll */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.op__tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.op__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #8891aa;
+  cursor: pointer;
+  transition: color 0.16s, background 0.16s;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.op__tab:hover:not(.op__tab--active) {
+  color: #4a506b;
+  background: rgba(108, 99, 255, 0.05);
+}
+
+/* Active tab — filled dark pill */
+.op__tab--active {
+  background: #1a1d2e;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Tab count badges ───────────────────────────────────────── */
+.op__tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 20px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.64rem;
+  font-weight: 700;
+  line-height: 1;
+  /* Default — overridden per status below */
+  background: rgba(108, 99, 255, 0.1);
+  color: #6c63ff;
+}
+
+/* Per-status badge colours (non-active tabs only) */
+.op__tab:not(.op__tab--active) .op__tab-count--assigned   { background: #f0f0ff; color: #6c63ff; }
+.op__tab:not(.op__tab--active) .op__tab-count--inprogress { background: #fffbec; color: #f59e0b; }
+.op__tab:not(.op__tab--active) .op__tab-count--completed  { background: #ecfdf5; color: #10b981; }
+.op__tab:not(.op__tab--active) .op__tab-count--delayed    { background: #fff0f0; color: #ef4444; }
+
+/* Active tab — badge goes white/translucent */
+.op__tab--active .op__tab-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESULTS META LINE
+══════════════════════════════════════════════════════════════ */
+.op__results-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #8891aa;
+  margin: -8px 0 -4px;
+  line-height: 1;
+}
+
+.op__results-sort {
+  color: #6c63ff;
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CARD GRID
+══════════════════════════════════════════════════════════════ */
+.op__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  /* Grid itself does NOT scroll — parent main-content scrolls */
+}
+
+/* ══════════════════════════════════════════════════════════════
+   EMPTY STATE
+══════════════════════════════════════════════════════════════ */
+.op__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 0;
+}
+
+.op__empty-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+}
+
+.op__empty-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #8891aa;
+  margin: 0;
+  text-align: center;
+}
+
+.op__empty-clear {
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1.5px solid #e2e5ee;
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #6c63ff;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.op__empty-clear:hover {
+  border-color: #6c63ff;
+  background: #f5f5ff;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .op__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .op__toolbar {
+    flex-wrap: wrap;
+  }
+
+  .op__search-wrap {
+    flex: 1 1 100%; /* full width on small screens */
+    order: -1;
+  }
+
+  .op__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 540px) {
+  .op__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .op__add-btn span {
+    display: none; /* icon only on very small screens */
+  }
+}

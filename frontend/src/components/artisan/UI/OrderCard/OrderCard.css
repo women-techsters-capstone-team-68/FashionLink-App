@@ -1,0 +1,204 @@
+/* ─────────────────────────────────────────────
+   OrderCard.css  —  prefix: oc-
+───────────────────────────────────────────── */
+
+.oc {
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 18px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  animation: oc-fadeUp 0.4s ease both;
+  outline: none;
+  position: relative;
+}
+
+.oc:hover,
+.oc:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(108, 99, 255, 0.15);
+  border-color: #c4c0ff;
+}
+
+/* ── Image zone ────────────────────────────── */
+.oc__image-wrap {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  background: #e8eaf0;
+  flex-shrink: 0;
+}
+
+.oc__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.oc:hover .oc__image {
+  transform: scale(1.07);
+}
+
+/* Order ID chip + badge — always above image */
+.oc__id-row {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.oc__id {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 8px;
+  padding: 3px 9px;
+  line-height: 1.4;
+}
+
+/* ── Hover overlay ─────────────────────────── */
+.oc__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 17, 40, 0.52);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  z-index: 3;
+}
+
+.oc:hover .oc__overlay,
+.oc:focus-visible .oc__overlay {
+  opacity: 1;
+}
+
+.oc__overlay-btn {
+  background: #fff;
+  color: #1a1d2e;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 22px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transform: translateY(6px);
+  transition: transform 0.22s ease, background 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+  pointer-events: none; /* card handles the click */
+}
+
+.oc:hover .oc__overlay-btn,
+.oc:focus-visible .oc__overlay-btn {
+  transform: translateY(0);
+}
+
+/* ── Card body ─────────────────────────────── */
+.oc__body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.oc__client {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.oc__desc {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #7c8db5;
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Footer ────────────────────────────────── */
+.oc__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f2f8;
+}
+
+.oc__delivery {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #8891aa;
+  font-weight: 500;
+}
+
+.oc__delivery-icon {
+  width: 14px;
+  height: 14px;
+  color: #aab0c8;
+  flex-shrink: 0;
+}
+
+.oc__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c63ff;
+  padding: 4px;
+  border-radius: 8px;
+  transition: background 0.15s, transform 0.2s;
+}
+
+.oc:hover .oc__arrow {
+  background: #f0f0ff;
+  transform: translateX(3px);
+}
+
+.oc__arrow-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Stagger animation ─────────────────────── */
+@keyframes oc-fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.oc:nth-child(1) { animation-delay: 0.04s; }
+.oc:nth-child(2) { animation-delay: 0.08s; }
+.oc:nth-child(3) { animation-delay: 0.12s; }
+.oc:nth-child(4) { animation-delay: 0.16s; }
+.oc:nth-child(5) { animation-delay: 0.20s; }
+.oc:nth-child(6) { animation-delay: 0.24s; }
+.oc:nth-child(7) { animation-delay: 0.28s; }

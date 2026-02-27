@@ -1,0 +1,48 @@
+.al {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #f5f6fa;
+  position: relative;
+}
+
+/* Mobile overlay behind the open sidebar drawer */
+.al__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 17, 32, 0.5);
+  z-index: 98;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Right column: header + scrollable content */
+.al__right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* THE ONLY scrolling zone in the entire layout */
+.al__content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 28px 32px;
+  scrollbar-width: thin;
+  scrollbar-color: #d0d4e8 transparent;
+}
+
+.al__content::-webkit-scrollbar       { width: 5px; }
+.al__content::-webkit-scrollbar-track  { background: transparent; }
+.al__content::-webkit-scrollbar-thumb  { background: #d0d4e8; border-radius: 10px; }
+
+
+@media (max-width: 1023px) { .al__content { padding: 24px 24px; } }
+
+@media (max-width: 767px)  { .al__content { padding: 20px 16px; } }
+
+@media (max-width: 479px)  { .al__content { padding: 16px 12px; } }

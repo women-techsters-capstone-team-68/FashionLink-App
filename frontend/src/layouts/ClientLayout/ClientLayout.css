@@ -1,0 +1,42 @@
+@import "../../layouts/ArtisanLayout/ArtisanLayout.css";
+
+/* Full width fix for Client Portal */
+.al__right {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.al__content {
+  flex: 1;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* Fix for Sidebar Icon Sizing */
+.sidebar__nav-icon .icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive Hamburger Visibility */
+.header__menu-btn {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .header__menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+}

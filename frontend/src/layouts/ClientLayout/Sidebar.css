@@ -1,0 +1,144 @@
+.sidebar {
+  width: 230px;
+  min-width: 230px;
+  background: #1a1f36;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.sidebar-logo {
+  width: 36px;
+  height: 36px;
+  background: #6b5ce7;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.sidebar-brand-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #4a5270;
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+  padding: 0 12px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #8892b0;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  /* font-family: 'Poppins', sans-serif; */
+  transition: all 0.15s;
+}
+
+.nav-item:hover {
+  background: #252d4a;
+  color: #fff;
+}
+
+.nav-item.active {
+  background: #252d4a;
+  color: #fff;
+  border-left: 3px solid #6b5ce7;
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #252d4a;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #6b5ce7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.sidebar-user-info { flex: 1; }
+
+.sidebar-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sidebar-user-role {
+  font-size: 11px;
+  color: #8892b0;
+}
+
+.sidebar-logout {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #8892b0;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-logout:hover { 
+  color: #e05252; 
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    left: -230px;
+    transition: left 0.3s ease;
+    z-index: 100;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+}

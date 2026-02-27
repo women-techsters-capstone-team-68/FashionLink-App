@@ -1,0 +1,157 @@
+/* ════════════════════════════════════════════════════════════════
+   CheckEmailPage.css  —  prefix: ce-
+   Split-screen: solid dark navy left | white confirmation right
+   Matches RESET_PASSWORD.png
+   ════════════════════════════════════════════════════════════════ */
+
+.ce {
+  min-height: 100vh;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ── LEFT ────────────────────────────────────────────────────── */
+.ce__panel {
+  background: #13152a;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 36px 36px;
+  min-height: 100vh;
+}
+
+.ce__panel-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ce__panel-logo-text {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.ce__panel-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 0 40px;
+}
+
+.ce__panel-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.ce__panel-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.65;
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.ce__panel-footer {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── RIGHT — confirmation content ────────────────────────────── */
+.ce__content-panel {
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 48px;
+  min-height: 100vh;
+}
+
+.ce__content-inner {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+  animation: fadeUp 0.35s ease both;
+}
+
+/* Mail icon */
+.ce__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  border: 2px solid #d4d0ff;
+  background: #f5f4ff;
+  flex-shrink: 0;
+}
+
+.ce__title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 800;
+  color: #1a1d2e;
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.ce__subtitle {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.95rem;
+  color: #6b7494;
+  font-weight: 600;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 360px;
+}
+
+.ce__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #6C63FF;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.18s;
+  margin-top: 8px;
+}
+
+.ce__back:hover { color: #5750e8; }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .ce                  { grid-template-columns: 1fr; }
+  .ce__panel           { min-height: auto; padding: 28px 28px 36px; }
+  .ce__panel-content   { padding: 32px 0; }
+  .ce__content-panel   { min-height: unset; padding: 48px 24px; }
+}
+
+@media (max-width: 479px) {
+  .ce__title           { font-size: 1.7rem; }
+  .ce__icon            { width: 72px; height: 72px; border-radius: 18px; }
+}
