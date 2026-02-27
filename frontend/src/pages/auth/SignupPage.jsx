@@ -35,7 +35,7 @@ export default function SignupPage() {
   const [error, setError]         = useState("");
   const [loading, setLoading]     = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     if (!firstName.trim()) { setError("First name is required."); return; }
@@ -44,12 +44,15 @@ export default function SignupPage() {
     if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
 
     setLoading(true);
-    setTimeout(() => {
-      const result = signup({ name: `${firstName.trim()} ${lastName.trim()}`, email, password, role });
-      setLoading(false);
-      if (!result.ok) { setError(result.error); return; }
-      navigate(result.redirectTo, { replace: true });
-    }, 400);
+    const result = await signup({
+      name:     `${firstName.trim()} ${lastName.trim()}`,
+      email,
+      password,
+      role,
+    });
+    setLoading(false);
+    if (!result.ok) { setError(result.error); return; }
+    navigate(result.redirectTo, { replace: true });
   };
 
   return (
