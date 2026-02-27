@@ -16,14 +16,16 @@ module.exports = {
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME || 'database_development',
     host: process.env.DB_HOST || '127.0.0.1',
-    dialect: process.env.DB_DIALECT || 'mysql'
+    dialect: process.env.DB_DIALECT || 'mysql',
+    port: process.env.DB_PORT || 3306
   },
   test: {
     username: process.env.DB_USERNAME || 'root',
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME || 'database_test',
     host: process.env.DB_HOST || '127.0.0.1',
-    dialect: process.env.DB_DIALECT || 'mysql'
+    dialect: process.env.DB_DIALECT || 'mysql',
+    port: process.env.DB_PORT || 3306
   },
   production: {
     username: process.env.DB_USERNAME,
@@ -31,6 +33,7 @@ module.exports = {
     database: process.env.DB_NAME,
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT || 'mysql',
+    port: process.env.DB_PORT || 3306,
     logging: false
   }
 };
