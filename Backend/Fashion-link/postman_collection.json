@@ -540,7 +540,7 @@
     },
     {
       "name": "Orders",
-      "description": "Order CRUD. Style reference image is not persisted (no storage). Use clientId, deliveryDate, description, notes, measurements (chest, waist, hip, shoulder, sleeve, length).",
+      "description": "Order CRUD. List: optional query params status, search, mine. Style reference image is not persisted. Update returns the updated order.",
       "item": [
         {
           "name": "Create Order",
@@ -574,7 +574,7 @@
           "request": {
             "method": "GET",
             "header": [{"key": "Authorization", "value": "Bearer {{authToken}}"}],
-            "url": { "raw": "{{baseUrl}}/api/orders", "host": ["{{baseUrl}}"], "path": ["api", "orders"] }
+            "url": { "raw": "{{baseUrl}}/api/orders?status=in_progress&search=Amara", "host": ["{{baseUrl}}"], "path": ["api", "orders"], "query": [{"key": "status", "value": "in_progress", "description": "Filter by status: pending, assigned, in_progress, completed, delayed"}, {"key": "search", "value": "Amara", "description": "Search order_number, description, or client name"}, {"key": "mine", "value": "1", "description": "For client role: only my orders"}] }
           },
           "response": [
             {
@@ -626,7 +626,7 @@
           "request": {
             "method": "PATCH",
             "header": [{"key": "Content-Type", "value": "application/json"}, {"key": "Authorization", "value": "Bearer {{authToken}}"}],
-            "body": { "mode": "raw", "raw": "{\n  \"status\": \"in_progress\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"in_progress\",\n  \"delivery_date\": \"2025-03-20\",\n  \"notes\": \"Updated notes\"\n}" },
             "url": { "raw": "{{baseUrl}}/api/orders/1", "host": ["{{baseUrl}}"], "path": ["api", "orders", "1"] }
           },
           "response": [
@@ -636,7 +636,7 @@
               "status": "OK",
               "code": 200,
               "header": [{"key": "Content-Type", "value": "application/json"}],
-              "body": "{\n  \"message\": \"Order updated successfully\"\n}"
+              "body": "{\n  \"message\": \"Order updated successfully\",\n  \"order\": {\n    \"id\": 1,\n    \"UserId\": 1,\n    \"ClientId\": 1,\n    \"order_number\": \"ORD-001\",\n    \"status\": \"in_progress\",\n    \"notes\": \"Updated notes\",\n    \"delivery_date\": \"2025-03-20\",\n    \"description\": \"Bespoke blazer\",\n    \"styleReferenceImageUrl\": null,\n    \"chest\": 40,\n    \"waist\": 32,\n    \"hip\": 42,\n    \"shoulder\": 18,\n    \"sleeve\": 24,\n    \"length\": 30,\n    \"tasks\": [],\n    \"client\": { \"id\": 1, \"fullName\": \"Jane Client\", \"email\": \"jane@example.com\", \"phone\": null },\n    \"createdAt\": \"2025-02-27T12:00:00.000Z\",\n    \"updatedAt\": \"2025-02-27T12:00:00.000Z\"\n  }\n}"
             },
             {
               "name": "401 Unauthorized",
@@ -908,6 +908,86 @@
               "code": 500,
               "header": [{"key": "Content-Type", "value": "application/json"}],
               "body": "{\n  \"message\": \"Internal server error\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "description": "OpenRouter-powered chat and artisan recommendations. Requires OPENROUTER_API_KEY in server .env. Auth: artisan, client, or admin.",
+      "item": [
+        {
+          "name": "Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    { \"role\": \"user\", \"content\": \"I need a tailor in Lagos for a wedding outfit.\" }\n  ]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/chat", "host": ["{{baseUrl}}"], "path": ["api", "ai", "chat"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/ai/chat", "host": ["{{baseUrl}}"], "path": ["api", "ai", "chat"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": {\n    \"role\": \"assistant\",\n    \"content\": \"I can help you find a tailor in Lagos for your wedding. You can use our artisan search or the AI recommendations endpoint with your occasion and location.\"\n  }\n}"
+            },
+            {
+              "name": "400 Bad Request",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/ai/chat", "host": ["{{baseUrl}}"], "path": ["api", "ai", "chat"] } },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"Body must include a non-empty messages array.\"\n}"
+            },
+            {
+              "name": "503 Service Unavailable",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/ai/chat", "host": ["{{baseUrl}}"], "path": ["api", "ai", "chat"] } },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"AI service is not configured.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get Artisan Recommendations",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{authToken}}"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"bodyShape\": \"hourglass\",\n  \"skinTone\": \"medium\",\n  \"stylePreferences\": [\"traditional\", \"modern\"],\n  \"location\": \"Lagos, Nigeria\",\n  \"occasion\": \"wedding\",\n  \"budgetHint\": \"mid-range\",\n  \"notes\": \"Looking for Aso-oke and tailoring\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/api/ai/recommendations/artisans", "host": ["{{baseUrl}}"], "path": ["api", "ai", "recommendations", "artisans"] }
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/ai/recommendations/artisans", "host": ["{{baseUrl}}"], "path": ["api", "ai", "recommendations", "artisans"] } },
+              "status": "OK",
+              "code": 200,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"recommendations\": [\n    {\n      \"artisanId\": 1,\n      \"reason\": \"Specializes in hand-woven Aso-oke and ceremonial fabrics; high rating and 10+ years experience.\",\n      \"styleHint\": \"Traditional wedding fabric sets\",\n      \"artisan\": {\n        \"id\": 1,\n        \"name\": \"Maria Adeife\",\n        \"role\": \"Aso-oke Weaver\",\n        \"location\": \"Lagos, Nigeria\",\n        \"category\": \"Textile & Fabric Creation\",\n        \"rating\": 4.9,\n        \"experience\": 10\n      }\n    }\n  ]\n}"
+            },
+            {
+              "name": "503 Service Unavailable",
+              "originalRequest": { "method": "POST", "url": { "raw": "{{baseUrl}}/api/ai/recommendations/artisans", "host": ["{{baseUrl}}"], "path": ["api", "ai", "recommendations", "artisans"] } },
+              "status": "Service Unavailable",
+              "code": 503,
+              "header": [{"key": "Content-Type", "value": "application/json"}],
+              "body": "{\n  \"message\": \"AI service is not configured.\"\n}"
             }
           ]
         }
