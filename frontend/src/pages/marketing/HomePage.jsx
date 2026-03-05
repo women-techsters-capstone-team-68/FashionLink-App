@@ -11,7 +11,7 @@ import Image8 from "../../assets/homepageimages/Placeholder Image6.png";
 import Image9 from "../../assets/homepageimages/Placeholder Image7.png";
 import "./HomePage.css";
 
-/* ── SVG icons ────────────────────────────────────────────────── */
+/* ── SVG icons ──── */
 const Logo = () => (
   <svg viewBox="0 0 32 32" fill="none" width="32" height="32">
     <circle cx="16" cy="16" r="16" fill="#6C63FF"/>
@@ -19,6 +19,7 @@ const Logo = () => (
     <path d="M12.5 17.5 H19.5" stroke="white" strokeWidth="2" strokeLinecap="round"/>
   </svg>
 );
+
 const IconOrders = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -27,12 +28,14 @@ const IconOrders = () => (
     <polyline points="10 9 9 9 8 9"/>
   </svg>
 );
+
 const IconRuler = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21.3 8.7L8.7 21.3a1 1 0 0 1-1.4 0l-6.6-6.6a1 1 0 0 1 0-1.4L13.3 2.7a1 1 0 0 1 1.4 0l6.6 6.6a1 1 0 0 1 0 1.4z"/>
     <path d="M7.5 10.5l2 2"/><path d="M10.5 7.5l2 2"/><path d="M13.5 4.5l2 2"/><path d="M4.5 13.5l2 2"/>
   </svg>
 );
+
 const IconUsers = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -40,40 +43,46 @@ const IconUsers = () => (
     <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
   </svg>
 );
+
 const IconBell = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
     <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
   </svg>
 );
+
 const IconCheck = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="20 6 9 17 4 12"/>
   </svg>
 );
+
 const IconArrow = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
   </svg>
 );
+
 const IconChevron = ({ open }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
     style={{ transform: open ? "rotate(180deg)" : "rotate(0)", transition: "transform 0.25s ease" }}>
     <polyline points="6 9 12 15 18 9"/>
   </svg>
 );
+
 const IconStar = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#f59e0b" strokeWidth="1">
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
   </svg>
 );
+
 const IconLayout = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>
   </svg>
 );
 
-/* ── FAQ data ─────────────────────────────────────────────────── */
+/* ── FAQ data ───── */
 const FAQS = [
   { q: "How do I start?", a: "Sign up takes minutes. Create your account, add your first client, and start building orders. We walk you through everything." },
   { q: "Is my data secure?", a: "Yes. Fashion Link uses industry-standard encryption and security practices. Your client data and order details are protected." },
@@ -82,7 +91,7 @@ const FAQS = [
   { q: "Can I cancel anytime?", a: "Yes. Cancel your subscription at any time with no penalties. Your data remains accessible for 30 days after cancellation." },
 ];
 
-/* ── FAQ Item ─────────────────────────────────────────────────── */
+/* ── FAQ Item ──────────── */
 function FaqItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
@@ -98,7 +107,8 @@ function FaqItem({ q, a }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════ */
+/* ═════════════════════════════════════════════ */
+
 export default function HomePage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -106,7 +116,7 @@ export default function HomePage() {
   return (
     <div className="hp">
 
-      {/* ── 1. NAV ────────────────────────────────────────────── */}
+      {/* ── 1. NAV ──────── */}
       <nav className="hp-nav">
         <div className="hp-nav__inner">
           <Link to="/" className="hp-nav__logo">
@@ -126,7 +136,7 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* ── 2. HERO ───────────────────────────────────────────── */}
+      {/* ── 2. HERO ────────── */}
       <section className="hp-hero">
         <div className="hp-hero__inner">
           <div className="hp-hero__text">
@@ -149,7 +159,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 3. CORE FEATURES ──────────────────────────────────── */}
+      {/* ── 3. CORE FEATURES ─────── */}
       <section className="hp-core" id="features">
         <div className="hp-core__inner">
           <p className="hp-core__eyebrow">Core</p>
@@ -199,7 +209,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 4. AI INTELLIGENCE ────────────────────────────────── */}
+      {/* ── 4. AI INTELLIGENCE ───── */}
       <section className="hp-ai">
         <div className="hp-ai__inner">
           <div className="hp-ai__text">
@@ -239,7 +249,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 5. SIMPLE TRACKING ────────────────────────────────── */}
+      {/* ── 5. SIMPLE TRACKING ──────── */}
       <section className="hp-track">
         <div className="hp-track__inner">
           <div className="hp-track__image-wrap">
@@ -274,7 +284,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 6. EFFICIENCY BENTO ───────────────────────────────── */}
+      {/* ── 6. EFFICIENCY BENTO ───── */}
       <section className="hp-bento">
         <div className="hp-bento__inner">
           <div className="hp-bento__left">
@@ -319,7 +329,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 7. MISSION ────────────────────────────────────────── */}
+      {/* ── 7. MISSION ──────── */}
       <section className="hp-mission">
         <div className="hp-mission__inner">
           <div className="hp-mission__icon">
@@ -339,7 +349,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 8. TESTIMONIALS ───────────────────────────────────── */}
+      {/* ── 8. TESTIMONIALS ─────── */}
       <section className="hp-testimonials">
         <div className="hp-testimonials__inner">
           <p className="hp-testimonials__eyebrow">Real voices</p>
@@ -362,7 +372,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 9. CTA BANNER ─────────────────────────────────────── */}
+      {/* ── 9. CTA BANNER ──── */}
       <section className="hp-cta">
         <div className="hp-cta__inner">
           <div className="hp-cta__text">
@@ -379,7 +389,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 10. FAQ ───────────────────────────────────────────── */}
+      {/* ── 10. FAQ ──────── */}
       <section className="hp-faq" id="faq">
         <div className="hp-faq__inner">
           <h2 className="hp-faq__title">Questions</h2>
@@ -394,7 +404,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 11. NEWSLETTER ────────────────────────────────────── */}
+      {/* ── 11. NEWSLETTER ────── */}
       <section className="hp-newsletter">
         <div className="hp-newsletter__inner">
           <div className="hp-newsletter__left">
@@ -427,7 +437,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── 12. FOOTER ────────────────────────────────────────── */}
+      {/* ── 12. FOOTER──── */}
       <footer className="hp-footer">
         <div className="hp-footer__inner">
           <div className="hp-footer__cols">

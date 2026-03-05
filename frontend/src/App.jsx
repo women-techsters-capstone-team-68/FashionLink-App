@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import './App.css';
 
-/* ── Layouts ────────────────────────────────────────────────── */
+/* ── Layouts ─────────────── */
 import ArtisanLayout from "./layouts/ArtisanLayout/ArtisanLayout.jsx";
 import ClientLayout  from "./layouts/ClientLayout/ClientLayout.jsx";
 
@@ -15,7 +15,7 @@ import LoginPage          from "./pages/auth/LoginPage.jsx";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
 import CheckEmailPage     from "./pages/auth/CheckEmailPage.jsx";
 
-/* ── Artisan Pages ──────────────────────────────────────────── */
+/* ── Artisan Pages ─────────────────── */
 import Dashboard      from "./pages/artisan/Dashboard/Dashboard.jsx";
 import Orders         from "./pages/artisan/Orders/Orders.jsx";
 import OrderDetails   from "./pages/artisan/OrderDetails/OrderDetails.jsx";
@@ -29,21 +29,21 @@ import ComingSoon     from "./pages/artisan/ComingSoon/ComingSoon.jsx";
 import Notifications  from "./pages/artisan/Notifications/Notifications.jsx";
 import Settings       from "./pages/artisan/Settings/Settings.jsx";
 
-/* ── Client Pages ───────────────────────────────────────────── */
+/* ── Client Pages ────────────────── */
 import ClientDashboard     from './pages/client/Dashboard/Dashboard.jsx';
 import MyOrders            from './pages/client/MyOrders/MyOrders.jsx';
 import Messages            from './pages/client/Messages/Messages.jsx';
 import ClientNotifications from './pages/client/Notifications/Notifications.jsx';
 import Profile             from './pages/client/Profile/Profile.jsx';
 
-/* ── Route Guards ────────────────────────────────────────────── */
+/* ──Securing Route Guards ────────────────────── */
 
 function ProtectedRoute({ children, role }) {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   
   if (role && user.role !== role) {
-    /* Redirect to user's correct dashboard if they try to access wrong portal */
+    /* Redirecting to user's correct dashboard if they try to access wrong portal */
     return <Navigate to={user.role === "artisan" ? "/artisan/dashboard" : "/client/dashboard"} replace />;
   }
   return children;
@@ -57,7 +57,7 @@ function PublicOnlyRoute({ children }) {
   return children;
 }
 
-/* ── Router ──────────────────────────────────────────────────── */
+/* ── Router ────── */
 
 function AppRoutes() {
   const [gender, setGender] = useState('female');
@@ -99,7 +99,7 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
 
-      {/* ── Fallback ── */}
+      {/* ── Fallback when nothing else ── */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
