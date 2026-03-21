@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Icon from "../../components/Icon.jsx";
-import { navLinks } from "../../data/mockData.js";
+import { navLinks } from "../../../data/mockData.js";
 import "./Sidebar.css";
 
 export default function Sidebar({ activePage, onNavigate, mobileOpen }) {
@@ -50,13 +50,13 @@ export default function Sidebar({ activePage, onNavigate, mobileOpen }) {
       <div className="sidebar__user">
         <div className="sidebar__avatar">
           {user?.avatar
-            ? <img src={user.avatar} alt={user.name} />
-            : <span>{user?.name?.charAt(0) ?? "?"}</span>
+            ? <img src={user.avatar} alt={user.fullName ?? user.firstName ?? "User"} />
+            : <span>{user?.firstName?.charAt(0)?.toUpperCase() ?? "?"}</span>
           }
         </div>
         {!collapsed && (
           <div className="sidebar__user-info">
-            <p className="sidebar__user-name">{user?.name ?? "User"} {console.log(user)}</p>
+            <p className="sidebar__user-name">{user?.fullName ?? user?.firstName ?? "User"}</p>
             <p className="sidebar__user-role" style={{ textTransform: "capitalize" }}>{user?.role ?? ""}</p>
           </div>
         )}

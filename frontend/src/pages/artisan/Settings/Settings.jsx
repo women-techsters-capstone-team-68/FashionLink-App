@@ -45,7 +45,7 @@ export default function Settings() {
   const { user, updateProfile } = useAuth();
 
   /* ── Form state (seeded from auth session) ────────────────── */
-  const [name,     setName]     = useState(user?.name         ?? "Grace Adebayo");
+  const [name,     setName]     = useState(user?.fullName     ?? "");
   const [biz,      setBiz]      = useState(user?.businessName ?? "Grace Couture");
   const [phone,    setPhone]    = useState(user?.phone        ?? "");
   const [dialCode, setDialCode] = useState(DIALS[0]);
@@ -80,8 +80,14 @@ export default function Settings() {
   /* Save everything */
   const handleSave = (e) => {
     e.preventDefault();
+    // Split the full name back into firstName/lastName for session consistency
+    const parts     = name.trim().split(/\s+/);
+    const firstName = parts[0] ?? "";
+    const lastName  = parts.slice(1).join(" ");
     updateProfile({
-      name,
+      fullName:       name,
+      firstName,
+      lastName,
       businessName:   biz,
       phone:          phone ? `${dialCode.dial} ${phone}` : "",
       country,
@@ -96,7 +102,7 @@ export default function Settings() {
   };
 
   /* Avatar display: uploaded image or initial letter */
-  const avatarLetter = (user?.name ?? name ?? "G").charAt(0).toUpperCase();
+  const avatarLetter = (user?.firstName ?? name ?? "G").charAt(0).toUpperCase();
 
   return (
     <div className="st">

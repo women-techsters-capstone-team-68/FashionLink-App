@@ -44,6 +44,7 @@ export default function SignupPage() {
     if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
 
     setLoading(true);
+    // Backend expects a single "name" field — combine firstName + lastName
     const result = await signup({
       name:     `${firstName.trim()} ${lastName.trim()}`,
       email,
@@ -52,6 +53,8 @@ export default function SignupPage() {
     });
     setLoading(false);
     if (!result.ok) { setError(result.error); return; }
+    // After successful registration always redirect to /login.
+    // AuthContext.signup() returns redirectTo: "/login" — we honour it here.
     navigate(result.redirectTo, { replace: true });
   };
 
@@ -129,7 +132,7 @@ export default function SignupPage() {
                 id="sp-first"
                 className="sp__input"
                 type="text"
-                placeholder="First Name"
+                placeholder="Placeholder"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 autoComplete="given-name"
@@ -144,7 +147,7 @@ export default function SignupPage() {
                 id="sp-last"
                 className="sp__input"
                 type="text"
-                placeholder="Last Name"
+                placeholder="Placeholder"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 autoComplete="family-name"
@@ -158,7 +161,7 @@ export default function SignupPage() {
                 id="sp-email"
                 className="sp__input"
                 type="email"
-                placeholder="Email"
+                placeholder="Placeholder"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -172,7 +175,7 @@ export default function SignupPage() {
                 id="sp-password"
                 className="sp__input"
                 type="password"
-                placeholder="Password"
+                placeholder="Placeholder"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"
