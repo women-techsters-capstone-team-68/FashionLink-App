@@ -56,7 +56,7 @@ export default function Sidebar({ activePage, onNavigate, mobileOpen }) {
         </div>
         {!collapsed && (
           <div className="sidebar__user-info">
-            <p className="sidebar__user-name">{user?.name ?? "User"}</p>
+            <p className="sidebar__user-name">{user?.name ?? "User"} {console.log(user)}</p>
             <p className="sidebar__user-role" style={{ textTransform: "capitalize" }}>{user?.role ?? ""}</p>
           </div>
         )}

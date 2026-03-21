@@ -129,7 +129,7 @@ export default function SignupPage() {
                 id="sp-first"
                 className="sp__input"
                 type="text"
-                placeholder="Placeholder"
+                placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 autoComplete="given-name"
@@ -144,7 +144,7 @@ export default function SignupPage() {
                 id="sp-last"
                 className="sp__input"
                 type="text"
-                placeholder="Placeholder"
+                placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 autoComplete="family-name"
@@ -158,7 +158,7 @@ export default function SignupPage() {
                 id="sp-email"
                 className="sp__input"
                 type="email"
-                placeholder="Placeholder"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -172,7 +172,7 @@ export default function SignupPage() {
                 id="sp-password"
                 className="sp__input"
                 type="password"
-                placeholder="Placeholder"
+                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="new-password"

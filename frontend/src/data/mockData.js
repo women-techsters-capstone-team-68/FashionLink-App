@@ -1,5 +1,5 @@
 /**
- * MOCK DATA — replace with real API calls when backend is ready.
+ * To simulate in the Orders page and clients page
  */
 
 import WhiteShirt from "../assets/ordercardimages/white shirt.png";
