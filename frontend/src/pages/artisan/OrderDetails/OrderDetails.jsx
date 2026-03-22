@@ -146,7 +146,7 @@ export default function OrderDetails() {
           <p className="od__topbar-client">{order.client}</p>
         </div>
         <div className="od__topbar-actions">
-          <button className="od__btn-edit" type="button" onClick={() => alert(`Edit ${order.id}`)}>
+          <button className="od__btn-edit" type="button" onClick={() => alert(`Edit ${order.id} button is working`)}>
             <IconEdit /> Edit
           </button>
           <button className="od__btn-delete" type="button" onClick={async () => { await deleteOrder(order.id); navigate("/artisan/orders"); }}>
@@ -291,10 +291,10 @@ export default function OrderDetails() {
           {/* Quick Links */}
           <div className="od__quick-links">
             <h3 className="od__quick-title">Quick Links</h3>
-            <button className="od__quick-link" type="button" onClick={() => alert("View client profile")}>
+            <button className="od__quick-link" type="button" onClick={() => alert("Is working")}>
               View Clients Profile
             </button>
-            <button className="od__quick-link" type="button" onClick={() => alert("Click tracking link")}>
+            <button className="od__quick-link" type="button" onClick={() => alert("Tracking link is working")}>
               Click Tracking Link
             </button>
           </div>

@@ -42,7 +42,7 @@ export default function ArtisanLayout({ children }) {
   const clientCount  = clients.length;
 
   const PAGE_META = {
-    "/artisan/dashboard":     { title: "Dashboard",      subtitle: `Hello, ${firstName}` },
+    "/artisan/dashboard":     { title: "Dashboard",      subtitle: `Hello ${firstName}, welcome to FashionLink` },
     "/artisan/orders":        { title: "Orders",         subtitle: `${activeOrders} active order${activeOrders !== 1 ? "s" : ""}` },
     "/artisan/add-order":     { title: "New Order",      subtitle: "Create a new client order" },
     "/artisan/clients":       { title: "Clients",        subtitle: `${clientCount} client${clientCount !== 1 ? "s" : ""}` },
