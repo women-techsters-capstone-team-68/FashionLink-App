@@ -2,7 +2,7 @@ import Icon from "../../../Icon.jsx";
 import StatusBadge from "../../StatusBadge/StatusBadge.jsx";
 import "./OrdersTable.css";
 
-export default function OrdersTable({ orders, onView, onViewAll, emptyMessage }) {
+export default function OrdersTable({ orders, onView, onViewAll }) {
   return (
     <section className="ot">
       <div className="ot__header">
@@ -13,7 +13,6 @@ export default function OrdersTable({ orders, onView, onViewAll, emptyMessage })
         </button>
       </div>
 
-      {/* Desktop table */}
       <div className="ot__table-wrap">
         <table className="ot__table">
           <thead>
@@ -27,40 +26,41 @@ export default function OrdersTable({ orders, onView, onViewAll, emptyMessage })
             </tr>
           </thead>
           <tbody>
-            {orders.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="ot__empty-row">
-                  {emptyMessage ?? "No orders yet."}
+            {orders.map((order, idx) => (
+              <tr
+                key={order.id}
+                className="ot__row"
+                style={{ animationDelay: `${0.3 + idx * 0.06}s` }}
+              >
+                <td className="ot__order-id">{order.id}</td>
+                <td className="ot__client">{order.client}</td>
+                <td className="ot__desc">{order.description}</td>
+                <td className="ot__delivery">
+                  <div className="ot__delivery-content" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Icon name="calendar" />
+                    {order.delivery}
+                  </div>
+                </td>
+                <td>
+                  {/* Using your modular component */}
+                  <StatusBadge status={order.status} />
+                </td>
+                <td>
+                  <button
+                    className="ot__view-btn"
+                    onClick={() => onView?.(order)}
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
-            ) : (
-              orders.map((order, idx) => (
-                <tr key={order.id} className="ot__row" style={{ animationDelay: `${0.3 + idx * 0.06}s` }}>
-                  <td className="ot__order-id">{order.id}</td>
-                  <td className="ot__client">{order.client}</td>
-                  <td className="ot__desc">{order.description}</td>
-                  <td>
-                    <span className="ot__delivery">
-                      <Icon name="calendar" />
-                      {order.delivery}
-                    </span>
-                  </td>
-                  <td><StatusBadge status={order.status} /></td>
-                  <td>
-                    <button className="ot__view-btn" onClick={() => onView?.(order)}>View</button>
-                  </td>
-                </tr>
-              ))
-            )}
+            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Mobile cards */}
+      {/* Mobile view cards */}
       <div className="ot__cards">
-        {orders.length === 0 && (
-          <p className="ot__empty-mobile">{emptyMessage ?? "No orders yet."}</p>
-        )}
         {orders.map((order) => (
           <div key={order.id} className="ot__card">
             <div className="ot__card-top">
@@ -70,11 +70,13 @@ export default function OrdersTable({ orders, onView, onViewAll, emptyMessage })
             <p className="ot__card-client">{order.client}</p>
             <p className="ot__card-desc">{order.description}</p>
             <div className="ot__card-bottom">
-              <span className="ot__delivery">
+              <div className="ot__delivery">
                 <Icon name="calendar" />
                 {order.delivery}
-              </span>
-              <button className="ot__view-btn" onClick={() => onView?.(order)}>View</button>
+              </div>
+              <button className="ot__view-btn" onClick={() => onView?.(order)}>
+                View
+              </button>
             </div>
           </div>
         ))}

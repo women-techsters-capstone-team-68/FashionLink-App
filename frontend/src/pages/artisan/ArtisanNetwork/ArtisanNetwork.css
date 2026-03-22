@@ -546,3 +546,90 @@
   .an__search-wrap { max-width: 100%; flex: 1 1 100%; }
   .an-drawer { width: 100%; max-width: 100%; }
 }
+
+/* ── Business name under artisan name ────────────────────────── */
+.an-card__business {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #6C63FF;
+  margin: 1px 0 0;
+}
+
+/* ── Own profile card ────────────────────────────────────────── */
+.an-card--own {
+  border-color: #6C63FF;
+  position: relative;
+}
+
+.an-card__you-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #6C63FF;
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+}
+
+.an-card__avatar--initials {
+  background: linear-gradient(135deg, #6C63FF, #a78bfa);
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.an__own-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.an__own-label {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6C63FF;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.an__grid--one {
+  grid-template-columns: 1fr;
+  max-width: 480px;
+}
+
+/* ── Results meta ────────────────────────────────────────────── */
+.an__results-meta {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #8891aa;
+  margin: -8px 0 0;
+}
+
+/* ── Infinite scroll loader ──────────────────────────────────── */
+.an__loader {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 8px;
+  min-height: 40px;
+}
+
+.an__loader-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #aab0c8;
+}
