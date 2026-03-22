@@ -72,3 +72,30 @@ export function clearUserStore(userId) {
 export function generateId(prefix) {
   return `${prefix}-${Date.now().toString(36).toUpperCase()}`;
 }
+
+/* ── Client Measurements (per client user) ───────────────────── */
+export function getMeasurements(userId) {
+  return read(key(userId, "measurements")) ?? {};
+}
+
+export function saveMeasurements(userId, measurements) {
+  write(key(userId, "measurements"), measurements);
+}
+
+/* ── Client Profile (name, phone, gender, avatar) ────────────── */
+export function getClientProfile(userId) {
+  return read(key(userId, "clientProfile")) ?? null;
+}
+
+export function saveClientProfile(userId, profile) {
+  write(key(userId, "clientProfile"), profile);
+}
+
+/* ── Client Orders (from artisan side, visible to client) ──────── */
+export function getClientOrders(userId) {
+  return read(key(userId, "clientOrders")) ?? [];
+}
+
+export function saveClientOrders(userId, orders) {
+  write(key(userId, "clientOrders"), orders);
+}

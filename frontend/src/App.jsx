@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useState }  from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth }  from "./context/AuthContext.jsx";
 import { DataProvider }           from "./context/DataContext.jsx";
+import { NotificationProvider }   from "./context/NotificationContext.jsx";
 
 /* ── Layouts ─────────────── */
 import ArtisanLayout from "./layouts/ArtisanLayout/ArtisanLayout.jsx";
 import ClientLayout  from "./layouts/ClientLayout/ClientLayout.jsx";
 
-/* ── Home & Auth Pages ─────────────────────────────────── */
+/* ── Home & Auth ──────────────────────────────────── */
 import HomePage           from "./pages/marketing/HomePage.jsx";
-import LandingPage        from "./pages/Landing/LandingPage.jsx";
+import LandingPage        from "./pages/landing/LandingPage.jsx";
 import SignupPage         from "./pages/auth/SignupPage.jsx";
 import LoginPage          from "./pages/auth/LoginPage.jsx";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage.jsx";
@@ -29,21 +30,18 @@ import ComingSoon     from "./pages/artisan/ComingSoon/ComingSoon.jsx";
 import Notifications  from "./pages/artisan/Notifications/Notifications.jsx";
 import Settings       from "./pages/artisan/Settings/Settings.jsx";
 
-/* ── Client Pages ────────────────── */
-import ClientDashboard     from './pages/client/Dashboard/Dashboard.jsx';
-import MyOrders            from './pages/client/MyOrders/MyOrders.jsx';
-import Messages            from './pages/client/Messages/Messages.jsx';
-import ClientNotifications from './pages/client/Notifications/Notifications.jsx';
-import Profile             from './pages/client/Profile/Profile.jsx';
+/* ── Client Pages ─────────────────── */
+import ClientDashboard     from "./pages/client/Dashboard/Dashboard.jsx";
+import MyOrders            from "./pages/client/MyOrders/MyOrders.jsx";
+import Messages            from "./pages/client/Messages/Messages.jsx";
+import ClientNotifications from "./pages/client/Notifications/Notifications.jsx";
+import Profile             from "./pages/client/Profile/Profile.jsx";
 
-
-/* ──Securing Route Guards ────────────────────── */
+/* ── Route Guards ────────────────────────────────────────── */
 function ProtectedRoute({ children, role }) {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
-  
   if (role && user.role !== role) {
-    /* Wrong role — send to their own dashboard */
     return <Navigate to={user.role === "artisan" ? "/artisan/dashboard" : "/client/dashboard"} replace />;
   }
   return children;
@@ -57,22 +55,13 @@ function PublicOnlyRoute({ children }) {
   return children;
 }
 
-/* Artisan layout wrapper */
-// function ArtisanPage({ children }) {
-//   return (
-//     <ProtectedRoute role="artisan">
-//       <ArtisanLayout>{children}</ArtisanLayout>
-//     </ProtectedRoute>
-//   );
-// }
-
-/* ── Router ───────── */
+/* ── Router ───────────────────────────────────────────────── */
 function AppRoutes() {
-  const [gender, setGender] = useState('female');
+  const [gender, setGender] = useState("female");
 
   return (
     <Routes>
-      {/* ── Public Routes ── */}
+      {/* ── Public ── */}
       <Route path="/"                element={<PublicOnlyRoute><LandingPage /></PublicOnlyRoute>} />
       <Route path="/home"            element={<HomePage />} />
       <Route path="/signup"          element={<PublicOnlyRoute><SignupPage /></PublicOnlyRoute>} />
@@ -99,15 +88,9 @@ function AppRoutes() {
       <Route path="/client/orders"        element={<ProtectedRoute role="client"><ClientLayout><MyOrders /></ClientLayout></ProtectedRoute>} />
       <Route path="/client/messages"      element={<ProtectedRoute role="client"><ClientLayout><Messages /></ClientLayout></ProtectedRoute>} />
       <Route path="/client/notifications" element={<ProtectedRoute role="client"><ClientLayout><ClientNotifications /></ClientLayout></ProtectedRoute>} />
-      <Route path="/client/profile" element={
-        <ProtectedRoute role="client">
-          <ClientLayout>
-            <Profile gender={gender} setGender={setGender} />
-          </ClientLayout>
-        </ProtectedRoute>
-      } />
+      <Route path="/client/profile"       element={<ProtectedRoute role="client"><ClientLayout><Profile gender={gender} setGender={setGender} /></ClientLayout></ProtectedRoute>} />
 
-      {/* ── Fallback when nothing else ── */}
+      {/* ── Fallback ── */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -117,9 +100,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <DataProvider>
-          <AppRoutes />
-        </DataProvider>
+        <NotificationProvider>
+          <DataProvider>
+            <AppRoutes />
+          </DataProvider>
+        </NotificationProvider>
       </AuthProvider>
     </BrowserRouter>
   );

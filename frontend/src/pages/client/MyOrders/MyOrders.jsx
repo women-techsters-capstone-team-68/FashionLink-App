@@ -1,181 +1,198 @@
-import { useState } from 'react';
-import './MyOrders.css';
+import { useState, useEffect } from "react";
+import { useAuth }             from "../../../context/AuthContext.jsx";
+import { getClientOrders, saveClientOrders } from "../../../services/store.js";
+import { ordersApi }           from "../../../services/api.js";
+import "./MyOrders.css";
 
-const orders = [
-  {
-    id: 'ORD-001',
-    badge: 'In Progress',
-    badgeClass: 'inprogress',
-    artisan: 'Emmanuel Happiness',
-    description: 'Custom Aso-Oke Agbada with intricate embroidery for a traditional wedding ceremony',
-    dueDate: 'Feb 25',
-    image: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=300&h=200&fit=crop',
-    deliveryDate: 'Wed February 25, 2026',
-    timeRemaining: '3 days',
-    notes: 'Client prefers gold thread embroidery',
-    measurements: [
-      { label: 'Chest', value: '35' },
-      { label: 'Waist', value: '33' },
-      { label: 'Hip', value: '30' },
-      { label: 'Chest', value: '18' },
-      { label: 'Waist', value: '25' },
-      { label: 'Hip', value: '30' },
-    ],
-  },
-  {
-    id: 'ORD-006',
-    badge: 'Assigned',
-    badgeClass: 'assigned',
-    artisan: 'Emmanuel Happiness',
-    description: 'Casual Linen Shirt in off white with mandarin collar',
-    dueDate: 'Feb 28',
-    image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=300&h=200&fit=crop',
-    deliveryDate: 'Wed February 28, 2026',
-    timeRemaining: '6 days',
-    notes: 'Client prefers slim fit',
-    measurements: [
-      { label: 'Chest', value: '40' },
-      { label: 'Waist', value: '34' },
-      { label: 'Hip', value: '38' },
-      { label: 'Shoulder', value: '18' },
-      { label: 'Sleeve', value: '25' },
-      { label: 'Length', value: '62' },
-    ],
-  },
-];
+const FILTERS = ["All", "Assigned", "In Progress", "Completed", "Delayed"];
 
-const filters = ['All', 'Assigned', 'In Progress', 'Completed', 'Delayed'];
+/* ── Status Badge ─────────────────────────────────────────────── */
+function Badge({ status }) {
+  const map = { "in progress": "inprogress", "assigned": "assigned", "completed": "completed", "delayed": "delayed", "pending": "assigned" };
+  const cls = map[(status ?? "").toLowerCase()] ?? "assigned";
+  return <span className={`badge ${cls}`}>● {status}</span>;
+}
 
-export default function MyOrders() {
-  const [activeFilter, setActiveFilter] = useState('All');
-  const [search, setSearch] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState(null);
+/* ── Order Details View ──────────────────────────────────────── */
+function OrderDetails({ order, onBack }) {
+  const steps = [
+    { title: "Order Received",    desc: "Your order has been received and assigned to an artisan.", done: true  },
+    { title: "Work in Progress",  desc: "Your garment is being crafted with care and attention.",    done: ["In Progress", "Completed"].includes(order.status) },
+    { title: "Ready for Delivery",desc: "Your order is complete and ready to be delivered.",         done: order.status === "Completed" },
+  ];
 
-  const filtered = orders.filter((o) => {
-    const matchesFilter = activeFilter === 'All' || o.badge === activeFilter;
-    const matchesSearch =
-      o.description.toLowerCase().includes(search.toLowerCase()) ||
-      o.id.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
+  const meas = order.measurements ?? {};
+  const measFields = Object.entries(meas).filter(([, v]) => v !== "" && v !== undefined);
 
-  if (selectedOrder) {
-    return (
-      <div className="page-wrapper">
-        <div className="order-details-content">
-          <button className="back-btn" onClick={() => setSelectedOrder(null)}>
-            ← Back to orders
-          </button>
+  return (
+    <div className="order-details-content">
+      <button className="back-btn" onClick={onBack}>← Back to orders</button>
 
-          <div className="order-details-grid">
-            {/* LEFT */}
-            <div className="order-details-left">
-              <div className="details-card">
-                <div className="details-card-header">
-                  <div className="details-section-title">Order Details</div>
-                  <span className={`badge ${selectedOrder.badgeClass}`}>● {selectedOrder.badge}</span>
-                </div>
-                <div className="details-meta-grid">
-                  <div>
-                    <div className="details-meta-label">DELIVERY DATE</div>
-                    <div className="details-meta-value">📅 {selectedOrder.deliveryDate}</div>
-                  </div>
-                  <div>
-                    <div className="details-meta-label">TIME REMAINING</div>
-                    <div className="details-meta-value time-warning">⏱ {selectedOrder.timeRemaining}</div>
-                  </div>
-                </div>
-                <div className="details-section">
-                  <div className="details-meta-label">DESCRIPTION</div>
-                  <div className="details-meta-value">{selectedOrder.description}</div>
-                </div>
-                <div className="details-section">
-                  <div className="details-meta-label">NOTES</div>
-                  <div className="details-meta-value">{selectedOrder.notes}</div>
-                </div>
+      <div className="order-details-grid">
+        {/* LEFT */}
+        <div className="order-details-left">
+          <div className="details-card">
+            <div className="details-card-header">
+              <div className="details-section-title">Order Details</div>
+              <Badge status={order.status} />
+            </div>
+            <div className="details-meta-grid">
+              <div>
+                <div className="details-meta-label">DELIVERY DATE</div>
+                <div className="details-meta-value">📅 {order.delivery || "TBC"}</div>
               </div>
-
-              <div className="details-card">
-                <div className="details-section-title" style={{ marginBottom: '20px' }}>Order Timeline</div>
-                <div className="timeline">
-                  <div className="timeline-item">
-                    <div className="timeline-dot-wrap">
-                      <div className="timeline-dot done">✓</div>
-                      <div className="timeline-line done" />
-                    </div>
-                    <div className="timeline-content">
-                      <div className="timeline-step-title">Order Received</div>
-                      <div className="timeline-step-desc">Your Order has been received and assigned to our Artisan</div>
-                    </div>
-                  </div>
-                  <div className="timeline-item">
-                    <div className="timeline-dot-wrap">
-                      <div className="timeline-dot done">✓</div>
-                      <div className="timeline-line" />
-                    </div>
-                    <div className="timeline-content">
-                      <div className="timeline-step-title">Work in Progress</div>
-                      <div className="timeline-step-desc">Your garment is being crafted with care and attention to details</div>
-                    </div>
-                  </div>
-                  <div className="timeline-item">
-                    <div className="timeline-dot-wrap">
-                      <div className="timeline-dot pending" />
-                    </div>
-                    <div className="timeline-content">
-                      <div className="timeline-step-title">Ready for Delivery</div>
-                      <div className="timeline-step-desc">Your order is complete and ready to be delivered or picked up</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="details-card">
-                <div className="details-section-title" style={{ marginBottom: '20px' }}>📏 Measurement (inches)</div>
-                <div className="measurements-grid">
-                  {selectedOrder.measurements.map((m, i) => (
-                    <div key={i} className="measurement-item">
-                      <div className="measurement-label">{m.label}</div>
-                      <input className="measurement-input" defaultValue={m.value} readOnly />
-                    </div>
-                  ))}
-                </div>
+              <div>
+                <div className="details-meta-label">ORDER ID</div>
+                <div className="details-meta-value">{order.id}</div>
               </div>
             </div>
-
-            {/* RIGHT */}
-            <div className="order-details-right">
-              <div className="details-card">
-                <div className="details-section-title" style={{ marginBottom: '14px' }}>Style Reference</div>
-                <img
-                  src={selectedOrder.image}
-                  alt="Style Reference"
-                  className="style-ref-image"
-                />
+            <div className="details-section">
+              <div className="details-meta-label">DESCRIPTION</div>
+              <div className="details-meta-value">{order.description || "No description"}</div>
+            </div>
+            {order.notes && (
+              <div className="details-section">
+                <div className="details-meta-label">NOTES</div>
+                <div className="details-meta-value">{order.notes}</div>
               </div>
-
-              <div className="details-card">
-                <div className="details-section-title" style={{ marginBottom: '8px' }}>Status</div>
-                <div className="status-text">Contact your artisan for questions about this order.</div>
-                <button className="contact-artisan-btn">✉️ Contact Artisan</button>
+            )}
+            {order.client && (
+              <div className="details-section">
+                <div className="details-meta-label">ARTISAN</div>
+                <div className="details-meta-value">{order.client}</div>
               </div>
+            )}
+          </div>
 
-              <div className="details-card">
-                <div className="details-section-title" style={{ marginBottom: '4px' }}>Share Tracking</div>
-                <div className="status-text">Share a public tracking link for this order.</div>
-                <button className="copy-link-btn">Copy Tracking Link</button>
+          <div className="details-card">
+            <div className="details-section-title" style={{ marginBottom: 20 }}>Order Timeline</div>
+            <div className="timeline">
+              {steps.map((step, i) => (
+                <div key={i} className="timeline-item">
+                  <div className="timeline-dot-wrap">
+                    <div className={`timeline-dot ${step.done ? "done" : "pending"}`}>
+                      {step.done ? "✓" : ""}
+                    </div>
+                    {i < steps.length - 1 && (
+                      <div className={`timeline-line ${step.done ? "done" : ""}`} />
+                    )}
+                  </div>
+                  <div className="timeline-content">
+                    <div className="timeline-step-title">{step.title}</div>
+                    <div className="timeline-step-desc">{step.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {measFields.length > 0 && (
+            <div className="details-card">
+              <div className="details-section-title" style={{ marginBottom: 20 }}>📏 Measurements (inches)</div>
+              <div className="measurements-grid">
+                {measFields.map(([label, value]) => (
+                  <div key={label} className="measurement-item">
+                    <div className="measurement-label" style={{ textTransform: "capitalize" }}>{label}</div>
+                    <input className="measurement-input" defaultValue={value} readOnly />
+                  </div>
+                ))}
               </div>
             </div>
+          )}
+        </div>
+
+        {/* RIGHT */}
+        <div className="order-details-right">
+          {order.image && (
+            <div className="details-card">
+              <div className="details-section-title" style={{ marginBottom: 14 }}>Style Reference</div>
+              <img src={order.image} alt="Style Reference" className="style-ref-image" />
+            </div>
+          )}
+          <div className="details-card">
+            <div className="details-section-title" style={{ marginBottom: 8 }}>Status</div>
+            <div className="status-text">Contact your artisan for questions about this order.</div>
+            <button className="contact-artisan-btn">✉️ Contact Artisan</button>
+          </div>
+          <div className="details-card">
+            <div className="details-section-title" style={{ marginBottom: 4 }}>Share Tracking</div>
+            <div className="status-text">Share a public tracking link for this order.</div>
+            <button className="copy-link-btn" onClick={() => {
+              const link = `${window.location.origin}/track/${order.id}`;
+              navigator.clipboard?.writeText(link);
+              alert("Tracking link copied!");
+            }}>Copy Tracking Link</button>
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════ */
+export default function MyOrders() {
+  const { user }    = useAuth();
+  const userId      = user?.id ?? user?.email ?? null;
+
+  const [orders,       setOrders]       = useState([]);
+  const [loading,      setLoading]      = useState(true);
+  const [activeFilter, setActiveFilter] = useState("All");
+  const [search,       setSearch]       = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [hovered,      setHovered]      = useState(null);
+
+  /* Load orders: API first, then localStorage fallback */
+  useEffect(() => {
+    if (!userId) { setLoading(false); return; }
+
+    const local = getClientOrders(userId);
+    setOrders(local);
+
+    // Try API
+    ordersApi.list({ mine: 1 }).then(({ data, error }) => {
+      if (!error && Array.isArray(data) && data.length > 0) {
+        const normalised = data.map((raw) => ({
+          id:          raw.order_number ?? String(raw.id),
+          apiId:       raw.id,
+          status:      (raw.status ?? "pending").charAt(0).toUpperCase() + (raw.status ?? "pending").slice(1).replace(/_/g, " "),
+          description: raw.description ?? "",
+          notes:       raw.notes ?? "",
+          delivery:    raw.delivery_date ? new Date(raw.delivery_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "",
+          image:       raw.styleReferenceImageUrl ?? null,
+          client:      raw.client?.fullName ?? raw.client?.name ?? "",
+          measurements: {
+            chest: raw.chest ?? "", waist: raw.waist ?? "",
+            hip: raw.hip ?? "", shoulder: raw.shoulder ?? "",
+            sleeve: raw.sleeve ?? "", length: raw.length ?? "",
+          },
+        }));
+        setOrders(normalised);
+        saveClientOrders(userId, normalised);
+      }
+      setLoading(false);
+    });
+  }, [userId]);
+
+  if (selectedOrder) {
+    return <OrderDetails order={selectedOrder} onBack={() => setSelectedOrder(null)} />;
   }
+
+  const filtered = orders.filter((o) => {
+    const matchFilter = activeFilter === "All" || o.status === activeFilter;
+    const q = search.toLowerCase();
+    const matchSearch = !q ||
+      (o.id          ?? "").toLowerCase().includes(q) ||
+      (o.description ?? "").toLowerCase().includes(q) ||
+      (o.status      ?? "").toLowerCase().includes(q) ||
+      (o.client      ?? "").toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
 
   return (
     <div className="page-wrapper">
-
       <div className="orders-content">
+
+        {/* Search + filter */}
         <div className="orders-search-row">
           <div className="orders-search-wrap">
             <span className="orders-search-icon">
@@ -183,64 +200,74 @@ export default function MyOrders() {
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
             </span>
-            <input
-              className="orders-search-input"
-              placeholder="Search Orders"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+            <input className="orders-search-input" placeholder="Search orders by name, ID, or status"
+              value={search} onChange={(e) => setSearch(e.target.value)} />
           </div>
-          <button className="filter-btn">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="4" y1="6" x2="20" y2="6"/>
-              <line x1="8" y1="12" x2="16" y2="12"/>
-              <line x1="11" y1="18" x2="13" y2="18"/>
-            </svg>
-            Filter
-          </button>
         </div>
 
+        {/* Filter tabs */}
         <div className="filter-tabs">
-          {filters.map((f) => (
-            <button
-              key={f}
-              className={`filter-tab ${activeFilter === f ? 'active' : ''}`}
-              onClick={() => setActiveFilter(f)}
-            >
+          {FILTERS.map((f) => (
+            <button key={f}
+              className={`filter-tab ${activeFilter === f ? "active" : ""}`}
+              onClick={() => setActiveFilter(f)}>
               {f}
             </button>
           ))}
         </div>
 
-        <div className="orders-grid">
-          {filtered.length === 0 ? (
-            <div className="no-results">No orders found</div>
-          ) : (
-            filtered.map((order) => (
-              <div
-                key={order.id}
-                className="order-grid-card"
-                onClick={() => setSelectedOrder(order)}
-              >
+        {/* Grid */}
+        {loading ? (
+          <div className="no-results">Loading orders…</div>
+        ) : filtered.length === 0 ? (
+          <div className="no-results">
+            {orders.length === 0
+              ? "No orders yet. Your artisan's orders for you will appear here."
+              : `No orders match "${search || activeFilter}"`}
+          </div>
+        ) : (
+          <div className="orders-grid">
+            {filtered.map((order) => (
+              <div key={order.id} className="order-grid-card"
+                onMouseEnter={() => setHovered(order.id)}
+                onMouseLeave={() => setHovered(null)}
+                onClick={() => setSelectedOrder(order)}>
+
+                {/* Card image or placeholder */}
                 <div className="order-card-image-wrap">
-                  <img src={order.image} alt={order.id} className="order-card-image" />
-                  <span className={`order-card-badge badge ${order.badgeClass}`}>
-                    ● {order.badge}
-                  </span>
+                  {order.image ? (
+                    <img src={order.image} alt={order.id} className="order-card-image" />
+                  ) : (
+                    <div className="order-card-placeholder">
+                      <span style={{ fontSize: 32 }}>🧵</span>
+                    </div>
+                  )}
+                  <span className={`order-card-badge badge ${
+                    order.status.toLowerCase() === "in progress" ? "inprogress" :
+                    order.status.toLowerCase()
+                  }`}>● {order.status}</span>
+
+                  {/* Hover overlay */}
+                  {hovered === order.id && (
+                    <div className="order-card-hover-overlay">
+                      <span>View Order Details</span>
+                    </div>
+                  )}
                 </div>
+
                 <div className="order-card-body">
                   <div className="order-card-id">{order.id}</div>
-                  <div className="order-card-artisan">{order.artisan}</div>
+                  {order.client && <div className="order-card-artisan">{order.client}</div>}
                   <div className="order-card-desc">{order.description}</div>
                   <div className="order-card-footer">
-                    <span className="order-card-date">📅 Due {order.dueDate}</span>
+                    <span className="order-card-date">📅 Due {order.delivery || "TBC"}</span>
                     <span className="order-card-arrow">→</span>
                   </div>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
