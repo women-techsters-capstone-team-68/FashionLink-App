@@ -55,16 +55,15 @@ export default function Sidebar({ activePage, onNavigate, mobileOpen }) {
 
       <div className="sidebar__user">
         <div className="sidebar__avatar">
-          {user?.avatar ? (
-            <img src={user.avatar} alt="User" />
-          ) : (
-            <span>{user?.name?.charAt(0).toUpperCase() || "C"}</span>
-          )}
+          {user?.avatar
+            ? <img src={user.avatar} alt={user.fullName ?? user.firstName ?? "User"} />
+            : <span>{user?.firstName?.charAt(0)?.toUpperCase() ?? "?"}</span>
+          }
         </div>
         {!collapsed && (
           <div className="sidebar__user-info">
-            <p className="sidebar__user-name">{user?.name || "Client"}</p>
-            <p className="sidebar__user-role">Client</p>
+            <p className="sidebar__user-name">{user?.fullName ?? user?.firstName ?? "User"}</p>
+            <p className="sidebar__user-role" style={{ textTransform: "capitalize" }}>{user?.role ?? ""}</p>
           </div>
         )}
         <button className="sidebar__logout-btn" onClick={handleLogout}>

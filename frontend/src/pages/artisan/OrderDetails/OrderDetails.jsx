@@ -1,6 +1,6 @@
 import { useState }                  from "react";
 import { useParams, useNavigate }     from "react-router-dom";
-import { allOrders, clients }         from "../../../data/mockData.js";
+import { useData }                    from "../../../context/DataContext.jsx";
 import StatusBadge                    from "../../../components/artisan/StatusBadge/StatusBadge.jsx";
 import "./OrderDetails.css";
 
@@ -103,8 +103,9 @@ const IconChevron = () => (
 export default function OrderDetails() {
   const { id }   = useParams();
   const navigate = useNavigate();
+  const { orders, clients, updateOrder, deleteOrder } = useData();
 
-  const order  = allOrders.find((o) => o.id === id);
+  const order  = orders.find((o) => o.id === id);
   const client = order ? clients.find((c) => c.id === order.clientId) : null;
 
   const [copied, setCopied]         = useState(false);
@@ -148,7 +149,7 @@ export default function OrderDetails() {
           <button className="od__btn-edit" type="button" onClick={() => alert(`Edit ${order.id}`)}>
             <IconEdit /> Edit
           </button>
-          <button className="od__btn-delete" type="button" onClick={() => { alert(`Deleted ${order.id}`); navigate("/artisan/orders"); }}>
+          <button className="od__btn-delete" type="button" onClick={async () => { await deleteOrder(order.id); navigate("/artisan/orders"); }}>
             <IconTrash /> Delete
           </button>
         </div>
@@ -251,7 +252,7 @@ export default function OrderDetails() {
               <select
                 className="od__status-select"
                 value={statusValue}
-                onChange={(e) => setStatusValue(e.target.value)}
+                onChange={async (e) => { const s = e.target.value; setStatusValue(s); await updateOrder(order.id, { status: s }); }}
               >
                 <option>Assigned</option>
                 <option>In Progress</option>

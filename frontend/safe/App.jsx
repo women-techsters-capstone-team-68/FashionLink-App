@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth }  from "./context/AuthContext.jsx";
-import { DataProvider }           from "./context/DataContext.jsx";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
+import './App.css';
 
 /* ── Layouts ─────────────── */
 import ArtisanLayout from "./layouts/ArtisanLayout/ArtisanLayout.jsx";
 import ClientLayout  from "./layouts/ClientLayout/ClientLayout.jsx";
 
-/* ── Home & Auth Pages ─────────────────────────────────── */
+/* ── Marketing & Auth Pages ─────────────────────────────────── */
 import HomePage           from "./pages/marketing/HomePage.jsx";
 import LandingPage        from "./pages/Landing/LandingPage.jsx";
 import SignupPage         from "./pages/auth/SignupPage.jsx";
@@ -36,14 +36,14 @@ import Messages            from './pages/client/Messages/Messages.jsx';
 import ClientNotifications from './pages/client/Notifications/Notifications.jsx';
 import Profile             from './pages/client/Profile/Profile.jsx';
 
-
 /* ──Securing Route Guards ────────────────────── */
+
 function ProtectedRoute({ children, role }) {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
   
   if (role && user.role !== role) {
-    /* Wrong role — send to their own dashboard */
+    /* Redirecting to user's correct dashboard if they try to access wrong portal */
     return <Navigate to={user.role === "artisan" ? "/artisan/dashboard" : "/client/dashboard"} replace />;
   }
   return children;
@@ -57,16 +57,8 @@ function PublicOnlyRoute({ children }) {
   return children;
 }
 
-/* Artisan layout wrapper */
-// function ArtisanPage({ children }) {
-//   return (
-//     <ProtectedRoute role="artisan">
-//       <ArtisanLayout>{children}</ArtisanLayout>
-//     </ProtectedRoute>
-//   );
-// }
+/* ── Router ────── */
 
-/* ── Router ───────── */
 function AppRoutes() {
   const [gender, setGender] = useState('female');
 
@@ -117,9 +109,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <DataProvider>
-          <AppRoutes />
-        </DataProvider>
+        <AppRoutes />
       </AuthProvider>
     </BrowserRouter>
   );

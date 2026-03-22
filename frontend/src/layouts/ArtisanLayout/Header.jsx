@@ -1,13 +1,9 @@
-/**
- * Header.jsx
- * - Bell icon → /artisan/notifications (badge shows unread count)
- * - Avatar → /artisan/settings (uses live auth avatar if uploaded)
- */
 import { useState }               from "react";
 import { useNavigate }             from "react-router-dom";
 import { useAuth }                 from "../../context/AuthContext.jsx";
 import Icon                        from "../../components/Icon.jsx";
 import "./Header.css";
+// import { PAGE_META } from "./ArtisanLayout.jsx";
 
 export default function Header({ title, subtitle, onMenuToggle, unreadCount = 3 }) {
   const [query, setQuery] = useState("");
@@ -17,6 +13,17 @@ export default function Header({ title, subtitle, onMenuToggle, unreadCount = 3 
   /* Avatar: use uploaded URL if available, else first letter of firstName */
   const avatarSrc    = user?.avatar ?? null;
   const avatarLetter = (user?.firstName ?? user?.fullName ?? "?").charAt(0).toUpperCase();
+
+  /* function to enable the function that displays the first name under dashboard*/
+  /*const pathname = window.location.pathname;
+  const currentPage = PAGE_META[pathname] || PAGE_META["/artisan/dashboard"];
+
+  if (!currentPage) return null;*/
+
+  // Resolve the subtitle logic
+  // If it's a function, call it with 'user'. Otherwise, use it as a string.
+  /*const displaySubtitle = typeof currentPage.subtitle === "function"
+    ? currentPage.subtitle(user) : currentPage.subtitle;*/
 
   return (
     <header className="header">

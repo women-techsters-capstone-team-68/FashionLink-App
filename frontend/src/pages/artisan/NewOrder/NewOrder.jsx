@@ -1,7 +1,14 @@
+/**
+ * NewOrder.jsx — /artisan/add-order
+ *
+ * On submit: writes to DataContext.addOrder() which persists to
+ * localStorage (and tries the API). Navigates to /artisan/orders on success.
+ * Client list comes from DataContext (no static mock).
+ */
 import { useState, useRef } from "react";
 import { useNavigate }      from "react-router-dom";
+import { useData }          from "../../../context/DataContext.jsx";
 import Icon from "../../../components/Icon.jsx";
-import { clients } from "../../../data/mockData.js";
 import "./NewOrder.css";
 
 const MEASUREMENT_FIELDS = [
@@ -16,17 +23,20 @@ const MEASUREMENT_FIELDS = [
 const EMPTY_MEASUREMENTS = MEASUREMENT_FIELDS.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {});
 
 export default function NewOrder() {
-  const navigate = useNavigate();
+  const navigate              = useNavigate();
+  const { clients, addOrder } = useData();
 
   const [selectedClientId, setSelectedClientId] = useState("");
-  const [deliveryDate, setDeliveryDate]         = useState("");
-  const [description, setDescription]           = useState("");
-  const [notes, setNotes]                       = useState("");
-  const [measurements, setMeasurements]         = useState(EMPTY_MEASUREMENTS);
-  const [uploadedFile, setUploadedFile]         = useState(null);
-  const [uploadPreview, setUploadPreview]       = useState(null);
-  const [isDragging, setIsDragging]             = useState(false);
-  const [selectOpen, setSelectOpen]             = useState(false);
+  const [deliveryDate,     setDeliveryDate]      = useState("");
+  const [description,      setDescription]       = useState("");
+  const [notes,            setNotes]             = useState("");
+  const [measurements,     setMeasurements]      = useState(EMPTY_MEASUREMENTS);
+  const [uploadedFile,     setUploadedFile]      = useState(null);
+  const [uploadPreview,    setUploadPreview]     = useState(null);
+  const [isDragging,       setIsDragging]        = useState(false);
+  const [selectOpen,       setSelectOpen]        = useState(false);
+  const [submitting,       setSubmitting]        = useState(false);
+  const [submitError,      setSubmitError]       = useState("");
   const fileInputRef = useRef(null);
 
   const selectedClient = clients.find((c) => c.id === selectedClientId);
@@ -38,9 +48,16 @@ export default function NewOrder() {
   };
 
   const handleAutofill = () => {
-    if (!selectedClient) return;
+    if (!selectedClient?.measurements) return;
     const m = selectedClient.measurements;
-    setMeasurements({ chest: String(m.chest), waist: String(m.waist), hip: String(m.hip), shoulder: String(m.shoulder), sleeve: String(m.sleeve), length: String(m.length) });
+    setMeasurements({
+      chest:    String(m.chest    ?? ""),
+      waist:    String(m.waist    ?? ""),
+      hip:      String(m.hip      ?? ""),
+      shoulder: String(m.shoulder ?? ""),
+      sleeve:   String(m.sleeve   ?? ""),
+      length:   String(m.length   ?? ""),
+    });
   };
 
   const processFile = (file) => {
@@ -53,15 +70,36 @@ export default function NewOrder() {
     reader.readAsDataURL(file);
   };
 
-  const removeUpload = () => { setUploadedFile(null); setUploadPreview(null); if (fileInputRef.current) fileInputRef.current.value = ""; };
+  const removeUpload = () => {
+    setUploadedFile(null);
+    setUploadPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedClientId) { alert("Please select a client."); return; }
-    if (!deliveryDate)     { alert("Please set a delivery date."); return; }
-    if (!description.trim()){ alert("Please add a style description."); return; }
-    alert(`Order created for ${selectedClient?.name}!`);
-    navigate("/artisan/orders");
+    setSubmitError("");
+    if (!selectedClientId)    { setSubmitError("Please select a client.");          return; }
+    if (!deliveryDate)        { setSubmitError("Please set a delivery date.");       return; }
+    if (!description.trim())  { setSubmitError("Please add a style description.");  return; }
+
+    setSubmitting(true);
+    const { ok } = await addOrder({
+      clientId:     selectedClient?.apiId ?? selectedClientId,
+      clientName:   selectedClient?.name  ?? "",
+      deliveryDate,
+      description,
+      notes,
+      image:        uploadPreview ?? null,
+      ...measurements,
+    });
+    setSubmitting(false);
+
+    if (ok) {
+      navigate("/artisan/orders");
+    } else {
+      setSubmitError("Failed to create order. Please try again.");
+    }
   };
 
   return (
@@ -78,16 +116,27 @@ export default function NewOrder() {
           <div className="no-row no-row--two-col">
             <div className="no-field">
               <label className="no-label">Client</label>
-              <div className={`no-select ${selectOpen ? "no-select--open" : ""}`} onClick={() => setSelectOpen(!selectOpen)} role="combobox" aria-expanded={selectOpen} tabIndex={0} onKeyDown={(e) => e.key === "Enter" && setSelectOpen(!selectOpen)}>
+              <div
+                className={`no-select ${selectOpen ? "no-select--open" : ""}`}
+                onClick={() => setSelectOpen(!selectOpen)}
+                role="combobox" aria-expanded={selectOpen} tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && setSelectOpen(!selectOpen)}
+              >
                 <span className={`no-select__value ${!selectedClientId ? "no-select__value--placeholder" : ""}`}>
-                  {selectedClient ? selectedClient.name : "Select a Client"}
+                  {selectedClient ? selectedClient.name : clients.length === 0 ? "No clients yet — add one first" : "Select a Client"}
                 </span>
                 <Icon name="chevronDown" />
               </div>
-              {selectOpen && (
+              {selectOpen && clients.length > 0 && (
                 <ul className="no-dropdown" role="listbox">
                   {clients.map((c) => (
-                    <li key={c.id} role="option" aria-selected={selectedClientId === c.id} className={`no-dropdown__item ${selectedClientId === c.id ? "no-dropdown__item--selected" : ""}`} onClick={() => { setSelectedClientId(c.id); setSelectOpen(false); }}>
+                    <li
+                      key={c.id}
+                      role="option"
+                      aria-selected={selectedClientId === c.id}
+                      className={`no-dropdown__item ${selectedClientId === c.id ? "no-dropdown__item--selected" : ""}`}
+                      onClick={() => { setSelectedClientId(c.id); setSelectOpen(false); }}
+                    >
                       <Icon name="userFill" />{c.name}
                     </li>
                   ))}
@@ -117,7 +166,14 @@ export default function NewOrder() {
 
         <section className="no-section">
           <h2 className="no-section-title">Style Reference</h2>
-          <div className={`no-upload-zone ${isDragging ? "no-upload-zone--drag" : ""} ${uploadPreview ? "no-upload-zone--has-file" : ""}`} onClick={() => !uploadPreview && fileInputRef.current?.click()} onDrop={(e) => { e.preventDefault(); setIsDragging(false); processFile(e.dataTransfer.files[0]); }} onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }} onDragLeave={() => setIsDragging(false)} role="button" tabIndex={0} aria-label="Upload style reference">
+          <div
+            className={`no-upload-zone ${isDragging ? "no-upload-zone--drag" : ""} ${uploadPreview ? "no-upload-zone--has-file" : ""}`}
+            onClick={() => !uploadPreview && fileInputRef.current?.click()}
+            onDrop={(e) => { e.preventDefault(); setIsDragging(false); processFile(e.dataTransfer.files[0]); }}
+            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+            onDragLeave={() => setIsDragging(false)}
+            role="button" tabIndex={0} aria-label="Upload style reference"
+          >
             <input ref={fileInputRef} type="file" accept="image/png,image/jpeg" className="no-upload-input" onChange={(e) => processFile(e.target.files[0])} tabIndex={-1} />
             {uploadPreview ? (
               <div className="no-upload-preview">
@@ -155,9 +211,13 @@ export default function NewOrder() {
           </div>
         </section>
 
+        {submitError && <p className="no-error">{submitError}</p>}
+
         <div className="no-footer">
           <button type="button" className="no-cancel-btn" onClick={() => navigate("/artisan/orders")}>Cancel</button>
-          <button type="submit" className="no-submit-btn">Create Order</button>
+          <button type="submit" className="no-submit-btn" disabled={submitting}>
+            {submitting ? "Creating…" : "Create Order"}
+          </button>
         </div>
       </form>
     </div>

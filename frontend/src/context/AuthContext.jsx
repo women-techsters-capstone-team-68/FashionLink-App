@@ -1,46 +1,8 @@
-/**
- * AuthContext.jsx
- *
- * Wired to the Fashion Link API (finalPostman.json).
- * Base URL: https://fashion-link-m2y7.onrender.com
- *
- * ── Auth endpoints ────────────────────────────────────────────
- *
- * POST /api/auth/register
- *   Request : { "name": string, "email": string, "password": string, "role": "artisan"|"client"|"admin" }
- *   Success 201 : { "token": "eyJ...", "user": { id, name, email, role, createdAt, updatedAt } }
- *   Error   400 : { "message": "Role must be \"artisan\", \"client\", or \"admin\"" }
- *   → After success: redirect to /login (NOT dashboard — user must sign in)
- *
- * POST /api/auth/login
- *   Request : { "email": string, "password": string }
- *   Success 200 : { "token": "eyJ...", "user": { id, name, email, role, createdAt, updatedAt } }
- *   Error   401 : { "message": "Incorrect password" }
- *   Error   404 : { "message": "User not found" }
- *   → Token field: "token"
- *   → After success: redirect based on role
- *
- * ── Name normalisation ────────────────────────────────────────
- * The backend stores and returns a single "name" field ("John Doe").
- * The UI needs firstName and lastName separately (for the Sidebar,
- * Header avatar initial, and Settings page).
- *
- * splitName("John Doe")  → { firstName: "John", lastName: "Doe" }
- * splitName("John")      → { firstName: "John", lastName: "" }
- * splitName("")          → { firstName: "", lastName: "" }
- *
- * The session object stored in sessionStorage always contains:
- *   { id, email, role, firstName, lastName, fullName, avatar? }
- *
- * ── Storage ───────────────────────────────────────────────────
- * Token  → localStorage  "fl_token"   (survives tab close)
- * User   → sessionStorage "fl_user"   (clears on tab close)
- */
 import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
 
-/* ── Constants ───────────────────────────────────────────────── */
+/* ── Constants ────────────── */
 const BASE_URL = "https://fashion-link-m2y7.onrender.com";
 
 const ROLE_ROUTES = {
@@ -49,13 +11,7 @@ const ROLE_ROUTES = {
   admin:   "/artisan/dashboard",
 };
 
-/* ── Name splitter ───────────────────────────────────────────── */
-/**
- * splitName("Grace Adebayo")  → { firstName: "Grace", lastName: "Adebayo" }
- * splitName("Grace A B")      → { firstName: "Grace", lastName: "A B" }  (all after first word)
- * splitName("Grace")          → { firstName: "Grace", lastName: "" }
- * splitName("")               → { firstName: "", lastName: "" }
- */
+/* ── Name splitter ──────────── */
 function splitName(fullName = "") {
   const trimmed = fullName.trim();
   if (!trimmed) return { firstName: "", lastName: "" };
@@ -67,11 +23,8 @@ function splitName(fullName = "") {
   };
 }
 
-/* ── Session builder ─────────────────────────────────────────── */
-/**
- * Builds the normalised session object from an API user payload.
- * Always returns: { id, email, role, firstName, lastName, fullName }
- */
+/* ── Session builder ───────── */
+
 function buildSession(apiUser) {
   const fullName = apiUser.name ?? "";
   const { firstName, lastName } = splitName(fullName);
@@ -85,7 +38,7 @@ function buildSession(apiUser) {
   };
 }
 
-/* ── sessionStorage helpers ──────────────────────────────────── */
+/* ── sessionStorage helpers ────── */
 function loadUser() {
   try {
     const raw = sessionStorage.getItem("fl_user");
@@ -95,7 +48,7 @@ function loadUser() {
 function saveUser(user) { sessionStorage.setItem("fl_user", JSON.stringify(user)); }
 function clearUser()    { sessionStorage.removeItem("fl_user"); }
 
-/* ── localStorage helpers (JWT) ──────────────────────────────── */
+/* ── localStorage helpers (JWT) ────────── */
 function saveToken(token) { localStorage.setItem("fl_token", token); }
 function clearToken()     { localStorage.removeItem("fl_token"); }
 export function getToken()  { return localStorage.getItem("fl_token"); }
@@ -105,15 +58,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(loadUser);
 
   /* ── login ─────────────────────────────────────────────────── */
-  /**
-   * POST /api/auth/login
-   * Request body : { email, password }
-   * Success 200  : { token, user: { id, name, email, role, ... } }
-   * Error   401  : { message: "Incorrect password" }
-   * Error   404  : { message: "User not found" }
-   *
-   * Returns { ok: true, redirectTo } | { ok: false, error }
-   */
   const login = async ({ email, password }) => {
     try {
       const res  = await fetch(`${BASE_URL}/api/auth/login`, {
@@ -143,18 +87,7 @@ export function AuthProvider({ children }) {
   };
 
   /* ── signup ────────────────────────────────────────────────── */
-  /**
-   * POST /api/auth/register
-   * Request body : { name, email, password, role }
-   * Success 201  : { token, user: { id, name, email, role, ... } }
-   * Error   400  : { message: "Role must be \"artisan\", \"client\", or \"admin\"" }
-   *
-   * On success → returns { ok: true, redirectTo: "/login" }
-   * Caller (SignupPage) navigates to /login so the user signs in explicitly.
-   * We intentionally do NOT auto-login or store a session after registration.
-   *
-   * Returns { ok: true, redirectTo } | { ok: false, error }
-   */
+
   const signup = async ({ name, email, password, role }) => {
     try {
       const res  = await fetch(`${BASE_URL}/api/auth/register`, {
@@ -184,11 +117,6 @@ export function AuthProvider({ children }) {
   };
 
   /* ── updateProfile ─────────────────────────────────────────── */
-  /**
-   * Merges a patch into the current session (local only).
-   * Accepts partial updates: { firstName, lastName, avatar, ... }
-   * Automatically keeps fullName in sync when first/lastName change.
-   */
   const updateProfile = (patch) => {
     const merged = { ...user, ...patch };
 

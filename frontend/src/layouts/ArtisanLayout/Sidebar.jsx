@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import Icon from "../../components/Icon.jsx";
-import { navLinks } from "../../../data/mockData.js";
+import { navLinks } from "../../data/mockData.js";
 import "./Sidebar.css";
 
 export default function Sidebar({ activePage, onNavigate, mobileOpen }) {
