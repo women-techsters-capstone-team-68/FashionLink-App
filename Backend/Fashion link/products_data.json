@@ -1,0 +1,42 @@
+[
+  {
+    "productId": "101",
+    "brand": "Adidas",
+    "category": "Mens fashion",
+    "price": "4000 naira",
+    "color": "Black",
+    "size": "XL"
+  },
+  {
+    "productId": "102",
+    "brand": "H&N",
+    "category": "Womens fashion",
+    "price": "53,000 naira",
+    "color": "yellow",
+    "size": "L"
+  },
+  {
+    "productId": "103",
+    "brand": "Zara",
+    "category": "Kids fashion",
+    "price": "10,000 naira",
+    "color": "pink",
+    "size": "S"
+  },
+  {
+    "productId": "104",
+    "brand": "Gucci",
+    "category": "Mens fashion",
+    "price": "12,000 naira",
+    "color": "blue",
+    "size": "M"
+  },
+  {
+    "productId": "105",
+    "brand": "Nike",
+    "category": "Womens fashion",
+    "price": "4000 naira",
+    "color": "purple",
+    "size": "L"
+  }
+]

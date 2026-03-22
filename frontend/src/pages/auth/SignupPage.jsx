@@ -44,6 +44,7 @@ export default function SignupPage() {
     if (password.length < 6) { setError("Password must be at least 6 characters."); return; }
 
     setLoading(true);
+    // Backend expects a single "name" field — combine firstName + lastName
     const result = await signup({
       name:     `${firstName.trim()} ${lastName.trim()}`,
       email,
@@ -52,6 +53,8 @@ export default function SignupPage() {
     });
     setLoading(false);
     if (!result.ok) { setError(result.error); return; }
+    // After successful registration always redirect to /login.
+    // AuthContext.signup() returns redirectTo: "/login" — we honour it here.
     navigate(result.redirectTo, { replace: true });
   };
 

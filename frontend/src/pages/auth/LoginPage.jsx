@@ -93,7 +93,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── RIGHT — form panel ─────────────────────────────────── */}
+      {/* ── RIGHT — form panel */}
       <div className="lgi__form-panel">
         <div className="lgi__form-inner">
           <h1 className="lgi__title">Welcome back</h1>
@@ -135,7 +135,7 @@ export default function LoginPage() {
                   <EyeIcon open={showPass} />
                 </button>
               </div>
-              {/* Forgot password link — right-aligned under field */}
+              {/* Forgot password link */}
               <div className="lgi__forgot-row">
                 <Link className="lgi__forgot-link" to="/forgot-password">
                   Forgot Password?

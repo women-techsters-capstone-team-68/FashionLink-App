@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth }  from "../../context/AuthContext.jsx";
 import Sidebar from "./Sidebar.jsx"; 
 import Topbar from "./Topbar.jsx";   
-import "./ClientLayout.css"; // We'll import Artisan CSS inside this file
+import "./ClientLayout.css"; // imported Artisan CSS inside this file
 
 const PATH_TO_PAGE = {
   "/client/dashboard":     "dashboard",
@@ -20,18 +21,21 @@ const PAGE_TO_PATH = {
   profile:       "/client/profile",
 };
 
-const PAGE_META = {
-  "/client/dashboard":     { title: "Dashboard",     subtitle: "Track your tailoring requests" },
+export default function ClientLayout({ children }) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user }  = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const firstName = user?.firstName ?? user?.fullName?.split(" ")[0] ?? "there";
+
+  const PAGE_META = {
+  "/client/dashboard":     { title: "Dashboard",     subtitle: `Hello ${firstName}, Let's help track your tailoring requests` },
   "/client/orders":        { title: "My Orders",     subtitle: "View your order history" },
   "/client/messages":      { title: "Messages",      subtitle: "Chat with your artisans" },
   "/client/notifications": { title: "Notifications", subtitle: "Stay updated" },
   "/client/profile":       { title: "My Profile",    subtitle: "Manage your measurements" },
 };
-
-export default function ClientLayout({ children }) {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const activePage = PATH_TO_PAGE[location.pathname] ?? "dashboard";
   const meta = PAGE_META[location.pathname] ?? PAGE_META["/client/dashboard"];

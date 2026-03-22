@@ -1,6 +1,6 @@
 import { useState }    from "react";
 import { useNavigate } from "react-router-dom";
-import { allOrders }   from "../../../data/mockData.js";
+import { useData }     from "../../../context/DataContext.jsx";
 import OrderCard       from "../../../components/artisan/UI/OrderCard/OrderCard.jsx";
 import FilterDropdown  from "../../../components/artisan/UI/FilterDropdown/FilterDropdown.jsx";
 import "./Orders.css";
@@ -9,6 +9,7 @@ const TABS = [
   { id: "All",         label: "All"         },
   { id: "Assigned",    label: "Assigned"    },
   { id: "In Progress", label: "In Progress" },
+  { id: "Pending",     label: "Pending"     },
   { id: "Completed",   label: "Completed"   },
   { id: "Delayed",     label: "Delayed"     },
 ];
@@ -16,24 +17,24 @@ const TABS = [
 const SORTERS = {
   "delivery-asc":  (a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate),
   "delivery-desc": (a, b) => new Date(b.deliveryDate) - new Date(a.deliveryDate),
-  "client-asc":    (a, b) => a.client.localeCompare(b.client),
-  "client-desc":   (a, b) => b.client.localeCompare(a.client),
-  "id-asc":        (a, b) => a.id.localeCompare(b.id),
-  "id-desc":       (a, b) => b.id.localeCompare(a.id),
+  "client-asc":    (a, b) => (a.client ?? "").localeCompare(b.client ?? ""),
+  "client-desc":   (a, b) => (b.client ?? "").localeCompare(a.client ?? ""),
+  "id-asc":        (a, b) => (a.id ?? "").localeCompare(b.id ?? ""),
+  "id-desc":       (a, b) => (b.id ?? "").localeCompare(a.id ?? ""),
 };
 
 export default function Orders() {
   const navigate = useNavigate();
+  const { orders, loadingOrders } = useData();
 
-  const [orders]     = useState(allOrders);
-  const [query,  setQuery]       = useState("");
-  const [activeTab,  setActiveTab]   = useState("All");
-  const [activeSort, setActiveSort]  = useState(null);
+  const [query,      setQuery]      = useState("");
+  const [activeTab,  setActiveTab]  = useState("All");
+  const [activeSort, setActiveSort] = useState(null);
 
   const q = query.toLowerCase();
 
   const filtered = orders
-    .filter((o) => !q || o.client.toLowerCase().includes(q) || o.id.toLowerCase().includes(q) || o.description.toLowerCase().includes(q))
+    .filter((o) => !q || (o.client ?? "").toLowerCase().includes(q) || (o.id ?? "").toLowerCase().includes(q) || (o.description ?? "").toLowerCase().includes(q))
     .filter((o) => activeTab === "All" || o.status === activeTab)
     .sort(activeSort ? SORTERS[activeSort] : () => 0);
 
@@ -60,7 +61,6 @@ export default function Orders() {
 
         <div className="op__actions">
           <FilterDropdown activeSort={activeSort} onSortChange={setActiveSort} />
-          {/* Full-page navigation — no modal */}
           <button className="op__add-btn" onClick={() => navigate("/artisan/add-order")} type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" width="16" height="16">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -92,21 +92,28 @@ export default function Orders() {
         </p>
       )}
 
+      {/* Loading */}
+      {loadingOrders && orders.length === 0 && (
+        <div className="op__empty"><p className="op__empty-text">Loading orders…</p></div>
+      )}
+
       {/* Grid */}
-      {filtered.length === 0 ? (
+      {!loadingOrders && filtered.length === 0 ? (
         <div className="op__empty">
           <span className="op__empty-icon">🔍</span>
-          <p className="op__empty-text">{query ? `No orders match "${query}"` : `No ${activeTab !== "All" ? activeTab : ""} orders yet`}</p>
+          <p className="op__empty-text">
+            {query
+              ? `No orders match "${query}"`
+              : activeTab !== "All"
+                ? `No ${activeTab} orders yet`
+                : "No orders yet. Create your first order!"}
+          </p>
           {query && <button className="op__empty-clear" onClick={() => setQuery("")} type="button">Clear search</button>}
         </div>
       ) : (
         <div className="op__grid">
           {filtered.map((order) => (
-            <OrderCard
-              key={order.id}
-              order={order}
-              onView={(o) => navigate(`/artisan/orders/${o.id}`)}
-            />
+            <OrderCard key={order.id} order={order} />
           ))}
         </div>
       )}

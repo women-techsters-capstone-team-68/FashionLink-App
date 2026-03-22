@@ -1,10 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { clients, allOrders }     from "../../../data/mockData";
+import { useData }                from "../../../context/DataContext.jsx";
 import StatusBadge                from "../../../components/artisan/StatusBadge/StatusBadge.jsx";
 import "./ClientProfile.css";
 
-function initials(name) {
-  return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+function initials(name = "") {
+  return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "?";
 }
 
 const MEASUREMENT_LABELS = [
@@ -16,9 +16,11 @@ const MEASUREMENT_LABELS = [
   { key: "length",   label: "Length"   },
 ];
 
+
 export default function ClientProfile() {
-  const { id }    = useParams();
-  const navigate  = useNavigate();
+  const { id }   = useParams();
+  const navigate = useNavigate();
+  const { clients, orders } = useData();
 
   const client = clients.find((c) => c.id === id);
 
@@ -31,13 +33,16 @@ export default function ClientProfile() {
     );
   }
 
-  /* Orders belonging to this client */
-  const clientOrders = allOrders.filter((o) => o.clientId === id);
+  // Orders whose clientId matches this client's id (local id or api id)
+  const clientOrders = orders.filter((o) =>
+    o.clientId === id || o.clientId === client.apiId
+  );
+
+  // Derived order count from live orders
+  const orderCount = clientOrders.length;
 
   return (
     <div className="cp">
-
-      {/* ── Back link ─────────────────────────────────────────── */}
       <button className="cp__back" onClick={() => navigate("/artisan/clients")} type="button">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
@@ -45,7 +50,6 @@ export default function ClientProfile() {
         Back to clients
       </button>
 
-      {/* ── Top row ───────────────────────────────────────────── */}
       <div className="cp__top">
 
         {/* Client info card */}
@@ -66,7 +70,7 @@ export default function ClientProfile() {
                   <polyline points="22,6 12,13 2,6"/>
                 </svg>
               </span>
-              <span>{client.email}</span>
+              <span>{client.email || "—"}</span>
             </div>
             <div className="cp__info-row">
               <span className="cp__info-icon">
@@ -74,7 +78,7 @@ export default function ClientProfile() {
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.59 1.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l1.27-.84a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                 </svg>
               </span>
-              <span>{client.phone}</span>
+              <span>{client.phone || "—"}</span>
             </div>
             <div className="cp__info-row">
               <span className="cp__info-icon">
@@ -83,18 +87,20 @@ export default function ClientProfile() {
                   <polyline points="14 2 14 8 20 8"/>
                 </svg>
               </span>
-              <span>{client.orderCount} orders</span>
+              <span>{orderCount} {orderCount === 1 ? "order" : "orders"}</span>
             </div>
-            <div className="cp__info-row">
-              <span className="cp__info-icon">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-              </span>
-              <span>Last Order : {client.lastOrder}</span>
-            </div>
+            {client.lastOrder && client.lastOrder !== "—" && (
+              <div className="cp__info-row">
+                <span className="cp__info-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </span>
+                <span>Last Order: {client.lastOrder}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -102,20 +108,17 @@ export default function ClientProfile() {
         <div className="cp__orders-card">
           <div className="cp__orders-head">
             <p className="cp__orders-title">Order History</p>
-            <span className="cp__orders-count">{clientOrders.length} orders</span>
+            <span className="cp__orders-count">{orderCount} {orderCount === 1 ? "order" : "orders"}</span>
           </div>
 
           <div className="cp__orders-list">
             {clientOrders.length === 0 ? (
-              <p className="cp__orders-empty">No orders yet.</p>
+              <p className="cp__orders-empty">No orders yet for this client.</p>
             ) : (
               clientOrders.map((order) => (
-                <div
-                  key={order.id}
-                  className="cp__order-row"
+                <div key={order.id} className="cp__order-row"
                   onClick={() => navigate(`/artisan/orders/${order.id}`)}
-                  role="button"
-                  tabIndex={0}
+                  role="button" tabIndex={0}
                   onKeyDown={(e) => e.key === "Enter" && navigate(`/artisan/orders/${order.id}`)}
                 >
                   <div className="cp__order-top">
@@ -128,14 +131,16 @@ export default function ClientProfile() {
                     </span>
                   </div>
                   <p className="cp__order-desc">{order.description}</p>
-                  <div className="cp__order-due">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                      <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-                      <line x1="3" y1="10" x2="21" y2="10"/>
-                    </svg>
-                    Due {order.delivery}
-                  </div>
+                  {order.delivery && (
+                    <div className="cp__order-due">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                      </svg>
+                      Due {order.delivery}
+                    </div>
+                  )}
                 </div>
               ))
             )}
@@ -143,7 +148,7 @@ export default function ClientProfile() {
         </div>
       </div>
 
-      {/* ── Measurements ──────────────────────────────────────── */}
+      {/* Measurements */}
       <div className="cp__measurements-card">
         <div className="cp__measurements-head">
           <span className="cp__measurements-icon">
@@ -160,7 +165,7 @@ export default function ClientProfile() {
             <div className="cp__measurement-field" key={key}>
               <label className="cp__measurement-label">{label}</label>
               <div className="cp__measurement-value">
-                {client.measurements[key] ?? "—"}
+                {(client.measurements?.[key] ?? "") !== "" ? `${client.measurements[key]} in` : "—"}
               </div>
             </div>
           ))}
