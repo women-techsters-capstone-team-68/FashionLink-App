@@ -38,7 +38,8 @@ export default function Header({ title, subtitle, onMenuToggle, unreadCount = 3 
       </div>
 
       <div className="header__right">
-        <div className="header__search-wrap">
+        {/* Remove the headder search icon because it wasnt cordinated at all */}
+        {/* <div className="header__search-wrap">
           <Icon name="search" className="header__search-icon" />
           <input
             className="header__search-input"
@@ -48,7 +49,7 @@ export default function Header({ title, subtitle, onMenuToggle, unreadCount = 3 
             onChange={(e) => setQuery(e.target.value)}
             aria-label="Global search"
           />
-        </div>
+        </div> */}
 
         {/* Notification bell — linked */}
         <button

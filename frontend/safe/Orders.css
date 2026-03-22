@@ -321,16 +321,3 @@
     display: none; /* icon only on very small screens */
   }
 }
-
-/* ── No-clients notice ───────────────────────────────────────── */
-.op__empty--info { background: #fafaff; border: 1.5px dashed #c4c0ff; }
-
-.op__clients-link {
-  color: #6C63FF;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  transition: color 0.15s;
-}
-.op__clients-link:hover { color: #5750e8; }
