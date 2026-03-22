@@ -6,13 +6,11 @@
   overflow-x: hidden;
 }
 
-.hp *,
-.hp *::before,
-.hp *::after {
+.hp *, .hp *::before, .hp *::after {
   box-sizing: border-box;
 }
 
-/* Shared section widths */
+/* All section widths */
 .hp-nav__inner,
 .hp-hero__inner,
 .hp-core__inner,
@@ -31,7 +29,7 @@
   padding: 0 32px;
 }
 
-/* Shared eyebrow label */
+/* All eyebrow labels */
 .hp-core__eyebrow,
 .hp-ai__eyebrow,
 .hp-bento__eyebrow,
@@ -243,9 +241,7 @@
   display: block;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   3. CORE FEATURES
-═══════════════════════════════════════════════════════════════ */
+/* 3. CORE FEATURES */
 .hp-core {
   padding: 96px 0;
   background: #989BF9;
@@ -373,9 +369,7 @@
   gap: 10px;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   4. AI INTELLIGENCE
-═══════════════════════════════════════════════════════════════ */
+/* 4. AI INTELLIGENCE */
 .hp-ai {
   background: #f8f7ff;
   padding: 96px 0;
@@ -515,9 +509,7 @@
   display: block;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   5. SIMPLE TRACKING
-═══════════════════════════════════════════════════════════════ */
+/* 5. SIMPLE TRACKING */
 .hp-track {
   background:#e2e5ee;
   padding: 96px 0;
@@ -661,9 +653,9 @@
   gap: 10px;
 }
 
-/* ═══════════════════════════════════════════════════════════════
+/* ══════
    6. EFFICIENCY BENTO
-═══════════════════════════════════════════════════════════════ */
+══════ */
 .hp-bento {
   background: #1E1F3F;
   padding: 96px 0;
@@ -894,9 +886,9 @@
   gap: 8px;
 }
 
-/* ═══════════════════════════════════════════════════════════════
+/* ═════
    7. MISSION
-═══════════════════════════════════════════════════════════════ */
+ */
 .hp-mission {
   background: #fff;
   padding: 96px 0;
@@ -990,9 +982,7 @@
   gap: 10px;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   8. TESTIMONIALS
-═══════════════════════════════════════════════════════════════ */
+/* 8. TESTIMONIALS */
 .hp-testimonials {
   background: #f8f7ff;
   padding: 96px 0;
@@ -1079,9 +1069,7 @@
   margin: 0;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   9. CTA BANNER
-═══════════════════════════════════════════════════════════════ */
+/* 9. CTA BANNER */
 .hp-cta {
   background: #fff;
   /* padding: 0 0 0; */
@@ -1092,7 +1080,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 24px;
- 
+
 }
 
 .hp-cta__text {
@@ -1180,9 +1168,7 @@
   display: block;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   10. FAQ
-═══════════════════════════════════════════════════════════════ */
+/* 10. FAQ */
 .hp-faq {
   background: #fff;
   padding: 96px 0;
@@ -1292,9 +1278,7 @@
   text-decoration: underline;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   11. NEWSLETTER
-═══════════════════════════════════════════════════════════════ */
+/* 11. NEWSLETTER */
 .hp-newsletter {
   background: #b3b6f0;
   padding: 80px 0;
@@ -1447,9 +1431,7 @@
   margin: 0;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   12. FOOTER
-═══════════════════════════════════════════════════════════════ */
+/*12. FOOTER */
 .hp-footer {
   background: #C5C7FD;
   border-top: 1px solid #f0f2f8;

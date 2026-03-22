@@ -2,77 +2,133 @@ import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
 
-/* ── Mock user store (simulate a database) ───────────────────── */
-const MOCK_USERS = [
-  { email: "artisan@demo.com", password: "password", role: "artisan", name: "Grace Adebayo" },
-  { email: "client@demo.com",  password: "password", role: "client",  name: "Amara Okonkwo" },
-];
+/* ── Constants ────────────── */
+const BASE_URL = "https://fashion-link-m2y7.onrender.com";
 
 const ROLE_ROUTES = {
   artisan: "/artisan/dashboard",
   client:  "/client/dashboard",
+  admin:   "/artisan/dashboard",
 };
 
+/* ── Name splitter ──────────── */
+function splitName(fullName = "") {
+  const trimmed = fullName.trim();
+  if (!trimmed) return { firstName: "", lastName: "" };
+  const spaceIdx = trimmed.indexOf(" ");
+  if (spaceIdx === -1) return { firstName: trimmed, lastName: "" };
+  return {
+    firstName: trimmed.slice(0, spaceIdx),
+    lastName:  trimmed.slice(spaceIdx + 1).trim(),
+  };
+}
+
+/* ── Session builder ───────── */
+
+function buildSession(apiUser) {
+  const fullName = apiUser.name ?? "";
+  const { firstName, lastName } = splitName(fullName);
+  return {
+    id:        apiUser.id   ?? null,
+    email:     apiUser.email ?? "",
+    role:      apiUser.role  ?? "artisan",
+    firstName,
+    lastName,
+    fullName,
+  };
+}
+
+/* ── sessionStorage helpers ────── */
 function loadUser() {
   try {
     const raw = sessionStorage.getItem("fl_user");
     return raw ? JSON.parse(raw) : null;
   } catch { return null; }
 }
+function saveUser(user) { sessionStorage.setItem("fl_user", JSON.stringify(user)); }
+function clearUser()    { sessionStorage.removeItem("fl_user"); }
 
-function saveUser(user) {
-  sessionStorage.setItem("fl_user", JSON.stringify(user));
-}
+/* ── localStorage helpers (JWT) ────────── */
+function saveToken(token) { localStorage.setItem("fl_token", token); }
+function clearToken()     { localStorage.removeItem("fl_token"); }
+export function getToken()  { return localStorage.getItem("fl_token"); }
 
-function clearUser() {
-  sessionStorage.removeItem("fl_user");
-}
-
-/* ── Provider ────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════ */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(loadUser);
 
-  /**
-   * mockLogin — checks against MOCK_USERS list.
-   * Returns { ok: true, redirectTo } or { ok: false, error }
-   * TODO: replace body with: const res = await fetch("/api/auth/login", ...)
-   */
-  const login = ({ email, password }) => {
-    const found = MOCK_USERS.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (!found) return { ok: false, error: "Invalid email or password." };
-    const session = { email: found.email, name: found.name, role: found.role };
-    saveUser(session);
-    setUser(session);
-    return { ok: true, redirectTo: ROLE_ROUTES[found.role] };
+  /* ── login ─────────────────────────────────────────────────── */
+  const login = async ({ email, password }) => {
+    try {
+      const res  = await fetch(`${BASE_URL}/api/auth/login`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        return { ok: false, error: data.message ?? "Login failed. Please try again." };
+      }
+
+      // Success: { token, user: { id, name, email, role } }
+      saveToken(data.token);
+
+      const session = buildSession(data.user ?? { email });
+      saveUser(session);
+      setUser(session);
+
+      const redirectTo = ROLE_ROUTES[session.role] ?? ROLE_ROUTES.artisan;
+      return { ok: true, redirectTo };
+
+    } catch {
+      return { ok: false, error: "Unable to reach the server. Check your connection." };
+    }
   };
 
-  /**
-   * mockSignup — registers a new mock user in memory.
-   * Returns { ok: true, redirectTo } or { ok: false, error }
-   * TODO: replace body with: const res = await fetch("/api/auth/signup", ...)
-   */
-  const signup = ({ name, email, password, role }) => {
-    const exists = MOCK_USERS.find((u) => u.email === email);
-    if (exists) return { ok: false, error: "An account with this email already exists." };
-    const newUser = { email, password, role, name };
-    MOCK_USERS.push(newUser);
-    const session = { email, name, role };
-    saveUser(session);
-    setUser(session);
-    return { ok: true, redirectTo: ROLE_ROUTES[role] };
+  /* ── signup ────────────────────────────────────────────────── */
+
+  const signup = async ({ name, email, password, role }) => {
+    try {
+      const res  = await fetch(`${BASE_URL}/api/auth/register`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ name, email, password, role }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        return { ok: false, error: data.message ?? "Registration failed. Please try again." };
+      }
+
+      // Registration succeeded — redirect to /login, NOT the dashboard.
+      return { ok: true, redirectTo: "/login" };
+
+    } catch {
+      return { ok: false, error: "Unable to reach the server. Check your connection." };
+    }
   };
 
+  /* ── logout ────────────────────────────────────────────────── */
   const logout = () => {
     clearUser();
+    clearToken();
     setUser(null);
   };
 
+  /* ── updateProfile ─────────────────────────────────────────── */
   const updateProfile = (patch) => {
-    const updated = { ...user, ...patch };
-    saveUser(updated);
-    setUser(updated);
+    const merged = { ...user, ...patch };
+
+    // Keep fullName consistent if firstName or lastName was updated
+    if (patch.firstName !== undefined || patch.lastName !== undefined) {
+      const fn = merged.firstName ?? "";
+      const ln = merged.lastName  ?? "";
+      merged.fullName = [fn, ln].filter(Boolean).join(" ");
+    }
+
+    saveUser(merged);
+    setUser(merged);
   };
 
   return (

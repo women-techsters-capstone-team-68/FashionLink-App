@@ -97,3 +97,47 @@
   .dash__add-btn  { padding: 13px 16px; font-size: 0.84rem; gap: 8px; }
   .dash__add-btn .icon svg { width: 16px; height: 16px; }
 }
+
+/* ── Empty state (new user) ──────────────────────────────────── */
+.dash__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 56px 24px;
+  background: #fff;
+  border: 1.5px dashed #d4d0ff;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.dash__empty-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0;
+}
+
+.dash__empty-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #8891aa;
+  margin: 0;
+  max-width: 360px;
+}
+
+.dash__empty .dash__add-btn {
+  width: auto;
+  padding: 13px 28px;
+  margin-top: 8px;
+}
+
+/* ── Loading state ───────────────────────────────────────────── */
+.dash__loading {
+  padding: 40px;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #8891aa;
+}

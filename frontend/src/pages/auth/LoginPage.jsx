@@ -47,17 +47,15 @@ export default function LoginPage() {
   const [error, setError]         = useState("");
   const [loading, setLoading]     = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     if (!email || !password) { setError("Email and password are required."); return; }
     setLoading(true);
-    setTimeout(() => {
-      const result = login({ email, password });
-      setLoading(false);
-      if (!result.ok) { setError(result.error); return; }
-      navigate(result.redirectTo, { replace: true });
-    }, 400);
+    const result = await login({ email, password });
+    setLoading(false);
+    if (!result.ok) { setError(result.error); return; }
+    navigate(result.redirectTo, { replace: true });
   };
 
   return (
@@ -95,16 +93,11 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* ── RIGHT — form panel ─────────────────────────────────── */}
+      {/* ── RIGHT — form panel */}
       <div className="lgi__form-panel">
         <div className="lgi__form-inner">
           <h1 className="lgi__title">Welcome back</h1>
           <p className="lgi__subtitle">Sign in to your account to continue .</p>
-
-          {/* Demo hint */}
-          <div className="lgi__demo-hint">
-            <strong>Demo:</strong> artisan@demo.com or client@demo.com · password: <code>password</code>
-          </div>
 
           <form className="lgi__form" onSubmit={handleSubmit} noValidate>
             <div className="lgi__field">
@@ -142,7 +135,7 @@ export default function LoginPage() {
                   <EyeIcon open={showPass} />
                 </button>
               </div>
-              {/* Forgot password link — right-aligned under field */}
+              {/* Forgot password link */}
               <div className="lgi__forgot-row">
                 <Link className="lgi__forgot-link" to="/forgot-password">
                   Forgot Password?

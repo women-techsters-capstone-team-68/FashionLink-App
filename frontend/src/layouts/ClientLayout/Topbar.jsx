@@ -20,10 +20,10 @@ export default function Topbar({ title, subtitle, onMenuToggle }) {
       </div>
 
       <div className="header__right">
-        <div className="header__search-wrap">
+        {/* <div className="header__search-wrap">
           <Icon name="search" className="header__search-icon" />
           <input className="header__search-input" type="text" placeholder="Search..." />
-        </div>
+        </div> */}
 
         <button className="header__notif-btn" onClick={() => navigate('/client/notifications')}>
           <Icon name="bell" />
@@ -32,9 +32,9 @@ export default function Topbar({ title, subtitle, onMenuToggle }) {
 
         <button className="header__avatar" onClick={() => navigate('/client/profile')}>
           {user?.avatar ? (
-            <img src={user.avatar} alt="User" className="header__avatar-img" />
+            <img src={user.avatar} alt={user?.fullName ?? user?.firstName ?? "User"} className="header__avatar-img" />
           ) : (
-            <span>{user?.name?.charAt(0).toUpperCase() || "C"}</span>
+            <span>{user?.firstName?.charAt(0)?.toUpperCase() ?? "?"}</span>
           )}
         </button>
       </div>

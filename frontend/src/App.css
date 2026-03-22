@@ -1,6 +1,6 @@
-/* App.css - Component Styles */
 
-/* This targets ONLY the Client Sidebar to fix interactivity */
+
+/*Client Sidebar to fix interactivity */
 .client-portal-wrapper aside, 
 .client-portal-wrapper .sidebar {
   position: relative;
@@ -9,7 +9,7 @@
   flex-shrink: 0;
 }
 
-/* Your original Artisan/Marketing styles below - untouched */
+/* Keeping original Artisan/Marketing styles untouched */
 .logo {
   height: 6em;
   padding: 1.5em;
