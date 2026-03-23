@@ -413,3 +413,90 @@
   color: #6C63FF;
   margin: 0;
 }
+
+/* ── Multiple phones / portfolio rows ──────────────────────── */
+.st__phone-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.st__input--phone { flex: 1; }
+
+.st__remove-btn {
+  background: #fff0f0;
+  color: #ef4444;
+  border: 1.5px solid #fecaca;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+.st__remove-btn:hover { background: #fee2e2; }
+
+.st__add-link {
+  background: none;
+  border: none;
+  color: #6C63FF;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 2px;
+  transition: opacity 0.15s;
+}
+.st__add-link:hover { opacity: 0.7; }
+
+/* ── Social media fields ─────────────────────────────────── */
+.st__social-field {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f2f8;
+}
+.st__social-field:last-child { border-bottom: none; }
+
+.st__social-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #4a506b;
+}
+
+/* ── Multi-select chips ──────────────────────────────────── */
+.st__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.st__chip {
+  background: #f4f6fb;
+  color: #4a506b;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.st__chip:hover { border-color: #6C63FF; color: #6C63FF; }
+.st__chip--on   { background: #eef2ff; border-color: #6C63FF; color: #6C63FF; }
+
+/* ── Flat field group (no dividers) ─────────────────────── */
+.st__field-group--flat { gap: 0; }
+.st__field-group--flat .st__field { border-bottom: 1px solid #f0f2f8; }
+.st__field-group--flat .st__field:last-child { border-bottom: none; }
