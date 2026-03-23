@@ -1,10 +1,7 @@
-/**
- * ArtisanProfile.jsx  —  route: /artisan/network/:id
- * Shows artisan header, about/skills/collab prefs, portfolio, reviews.
- * Matches PROFILE.png design exactly.
- */
-import { useParams, useNavigate } from "react-router-dom";
-import { artisans }               from "../../../data/artisanData";
+// ArtisanProfile.jsx — /artisan/network/:id — full profile with portfolio and reviews
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import ArtisanContact from "../ArtisanContact/ArtisanContact.jsx";
+import { artisans }               from "../../../data/artisanData.js";
 import "./ArtisanProfile.css";
 
 function StarRow({ rating }) {
@@ -25,8 +22,13 @@ function StarRow({ rating }) {
 export default function ArtisanProfile() {
   const { id }   = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isContact = new URLSearchParams(location.search).get("view") === "contact";
 
   const artisan = artisans.find((a) => a.id === id);
+
+  // Delegate to ArtisanContact when ?view=contact
+  if (isContact) return <ArtisanContact artisanId={id} artisanData={artisan} />;
 
   if (!artisan) {
     return (
@@ -85,7 +87,7 @@ export default function ArtisanProfile() {
           <button
             className="apr__btn-primary"
             type="button"
-            onClick={() => navigate("/artisan/coming-soon")}
+            onClick={() => navigate(`/artisan/network/${artisan.id}?view=contact`)}
           >
             Invite to Collaborate
           </button>

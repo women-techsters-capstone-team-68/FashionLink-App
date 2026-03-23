@@ -86,6 +86,7 @@ export default function NewOrder() {
     setSubmitting(true);
     const { ok } = await addOrder({
       clientId:     selectedClient?.apiId ?? selectedClientId,
+      clientEmail:  selectedClient?.email ?? "",
       clientName:   selectedClient?.name  ?? "",
       deliveryDate,
       description,
