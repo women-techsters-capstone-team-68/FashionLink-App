@@ -1,71 +1,35 @@
 /**
  * store.js — Per-user localStorage store.
  *
- * Keys are namespaced by user ID so two users on the same browser
- * never see each other's data.
- *
  * Key pattern: fl:<userId>:<collection>
- *   e.g. "fl:3:orders"  "fl:3:clients"
  *
- * Public API (all functions are synchronous):
- *
- *   getOrders(userId)          → Order[]
- *   saveOrders(userId, orders) → void
- *
- *   getClients(userId)          → Client[]
- *   saveClients(userId, clients)→ void
- *
- *   clearUser(userId)           → void   (logout / data wipe)
- *
- * The store does NOT contain any static seed data.
- * A brand-new user always sees empty arrays.
+ * SHARED KEYS (cross-user):
+ *   fl:global:registeredClients   → clients who signed up via client portal
+ *   fl:global:sharedOrders        → orders indexed by clientEmail for cross-portal linking
  */
 
 /* ── Helpers ─────────────────────────────────────────────────── */
-function key(userId, collection) {
-  return `fl:${userId}:${collection}`;
-}
+function key(userId, collection) { return `fl:${userId}:${collection}`; }
 
 function read(k) {
-  try {
-    const raw = localStorage.getItem(k);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
+  try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch { return null; }
 }
 
 function write(k, value) {
-  try {
-    localStorage.setItem(k, JSON.stringify(value));
-  } catch {
-    // localStorage full — silently skip (non-critical for demo)
-  }
+  try { localStorage.setItem(k, JSON.stringify(value)); } catch {}
 }
 
-/* ── Orders ──────────────────────────────────────────────────── */
-export function getOrders(userId) {
-  return read(key(userId, "orders")) ?? [];
-}
+/* ── Orders (artisan's own) ──────────────────────────────────── */
+export function getOrders(userId) { return read(key(userId, "orders")) ?? []; }
+export function saveOrders(userId, orders) { write(key(userId, "orders"), orders); }
 
-export function saveOrders(userId, orders) {
-  write(key(userId, "orders"), orders);
-}
+/* ── Clients (artisan's own) ─────────────────────────────────── */
+export function getClients(userId) { return read(key(userId, "clients")) ?? []; }
+export function saveClients(userId, clients) { write(key(userId, "clients"), clients); }
 
-/* ── Clients ─────────────────────────────────────────────────── */
-export function getClients(userId) {
-  return read(key(userId, "clients")) ?? [];
-}
-
-export function saveClients(userId, clients) {
-  write(key(userId, "clients"), clients);
-}
-
-/* ── Wipe all data for a user (logout) ───────────────────────── */
+/* ── Clear user store on logout ──────────────────────────────── */
 export function clearUserStore(userId) {
-  ["orders", "clients"].forEach((col) => {
-    localStorage.removeItem(key(userId, col));
-  });
+  ["orders", "clients"].forEach((col) => localStorage.removeItem(key(userId, col)));
 }
 
 /* ── Unique ID generator ─────────────────────────────────────── */
@@ -73,29 +37,61 @@ export function generateId(prefix) {
   return `${prefix}-${Date.now().toString(36).toUpperCase()}`;
 }
 
-/* ── Client Measurements (per client user) ───────────────────── */
-export function getMeasurements(userId) {
-  return read(key(userId, "measurements")) ?? {};
-}
-
-export function saveMeasurements(userId, measurements) {
-  write(key(userId, "measurements"), measurements);
-}
+/* ── Client Measurements (per client user, keyed by their userId) */
+export function getMeasurements(userId) { return read(key(userId, "measurements")) ?? {}; }
+export function saveMeasurements(userId, m) { write(key(userId, "measurements"), m); }
 
 /* ── Client Profile (name, phone, gender, avatar) ────────────── */
-export function getClientProfile(userId) {
-  return read(key(userId, "clientProfile")) ?? null;
+export function getClientProfile(userId) { return read(key(userId, "clientProfile")) ?? null; }
+export function saveClientProfile(userId, profile) { write(key(userId, "clientProfile"), profile); }
+
+/* ── Client Orders (cross-portal: written by artisan, read by client) ── */
+export function getClientOrders(clientEmail) {
+  return read(`fl:client:${clientEmail}:orders`) ?? [];
+}
+export function saveClientOrders(clientEmail, orders) {
+  write(`fl:client:${clientEmail}:orders`, orders);
 }
 
-export function saveClientProfile(userId, profile) {
-  write(key(userId, "clientProfile"), profile);
+/**
+ * pushOrderToClient — called by artisan when creating/updating an order.
+ * Appends or replaces the order in the client's order bucket, keyed by email.
+ * This is how client portal sees artisan-created orders.
+ */
+export function pushOrderToClient(clientEmail, order) {
+  if (!clientEmail) return;
+  const existing = getClientOrders(clientEmail);
+  const idx = existing.findIndex((o) => o.id === order.id);
+  if (idx >= 0) existing[idx] = order;
+  else existing.unshift(order);
+  saveClientOrders(clientEmail, existing);
 }
 
-/* ── Client Orders (from artisan side, visible to client) ──────── */
-export function getClientOrders(userId) {
-  return read(key(userId, "clientOrders")) ?? [];
+/**
+ * removeOrderFromClient — called by artisan when deleting an order.
+ */
+export function removeOrderFromClient(clientEmail, orderId) {
+  if (!clientEmail) return;
+  const filtered = getClientOrders(clientEmail).filter((o) => o.id !== orderId);
+  saveClientOrders(clientEmail, filtered);
 }
 
-export function saveClientOrders(userId, orders) {
-  write(key(userId, "clientOrders"), orders);
+/* ── Global registered clients registry ──────────────────────
+ * When a client signs up, their {id, email, fullName, phone} is
+ * stored here so artisans can search and autofill from real accounts.
+ */
+export function getRegisteredClients() {
+  return read("fl:global:registeredClients") ?? [];
+}
+
+export function registerClient(clientData) {
+  const all = getRegisteredClients();
+  const idx = all.findIndex((c) => c.email === clientData.email);
+  if (idx >= 0) all[idx] = { ...all[idx], ...clientData };
+  else all.push(clientData);
+  write("fl:global:registeredClients", all);
+}
+
+export function findRegisteredClient(email) {
+  return getRegisteredClients().find((c) => c.email === email) ?? null;
 }

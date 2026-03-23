@@ -10,7 +10,7 @@
  */
 import { useState, useRef }  from "react";
 import { useAuth }            from "../../../context/AuthContext.jsx";
-import { getMeasurements, saveMeasurements, saveClientProfile, getClientProfile } from "../../../services/store.js";
+import { getMeasurements, saveMeasurements, saveClientProfile, getClientProfile, registerClient } from "../../../services/store.js";
 import "./Profile.css";
 
 const FEMALE_MEAS = [
@@ -110,6 +110,11 @@ export default function Profile({ gender, setGender }) {
     const profileData = { name, email, phone, avatar, gender };
     if (userId) saveClientProfile(userId, profileData);
     if (userId) saveMeasurements(userId, meas);
+    // Register in global registry so artisans can find this client
+    const userEmail = user?.email ?? "";
+    if (userEmail) {
+      registerClient({ id: userId, email: userEmail, fullName: name.trim(), firstName: name.trim().split(/\s+/)[0], phone: phone.trim() });
+    }
     // Also update AuthContext session so Header shows new name/avatar
     const parts = name.trim().split(/\s+/);
     updateProfile({ fullName: name, firstName: parts[0] ?? "", lastName: parts.slice(1).join(" "), avatar });

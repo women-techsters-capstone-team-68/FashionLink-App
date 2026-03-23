@@ -1,8 +1,11 @@
+// ArtisanNetwork.jsx — /artisan/network — 60 artisan profiles, filters, infinite scroll
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate }   from "react-router-dom";
 import { useAuth }       from "../../../context/AuthContext.jsx";
-import { artisans, NETWORK_CATEGORIES, 
-    LOCATIONS, EXPERIENCE_LEVELS, COLLAB_TYPES, } from "../../../data/artisanData.js";
+import { artisans, NETWORK_CATEGORIES, LOCATIONS, 
+        EXPERIENCE_LEVELS, COLLAB_TYPES, } from "../../../data/artisanData.js";
+import ArtisanContact from "../ArtisanContact/ArtisanContact.jsx";
+
 import "./ArtisanNetwork.css";
 
 const PAGE_SIZE = 12;
@@ -20,11 +23,12 @@ function Stars({ rating }) {
 }
 
 /* ── Single artisan card ─────────────────────────────────────── */
-function ArtisanCard({ artisan, }) {
+function ArtisanCard({ artisan, isOwn }) {
   const navigate = useNavigate();
 
   return (
-    <div className="an-card">
+    <div className={`an-card ${isOwn ? "an-card--own" : ""}`}>
+      {isOwn && <span className="an-card__you-badge">You</span>}
 
       <div className="an-card__head">
         {artisan.avatar ? (
@@ -69,7 +73,7 @@ function ArtisanCard({ artisan, }) {
           View Profile
         </button>
         <button className="an-card__btn-outline" type="button"
-          onClick={() => navigate("/artisan/coming-soon")}>
+          onClick={() => navigate(`/artisan/network/${artisan.id}?view=contact`)}>
           Invite to Collaborate
         </button>
       </div>
@@ -239,22 +243,22 @@ export default function ArtisanNetwork() {
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   /* Build own profile card from Settings data */
-  // const ownProfile = user ? {
-  //   id:           "own",
-  //   name:         user.fullName  ?? user.firstName ?? "You",
-  //   businessName: user.businessName ?? "",
-  //   role:         "Fashion Artisan",
-  //   category:     user.category  ?? "",
-  //   location:     user.location  ?? (user.city ? `${user.city}, ${user.country ?? ""}` : (user.country ?? "")),
-  //   country:      user.country   ?? "",
-  //   experience:   user.yearsExp  ?? 0,
-  //   experienceLevel: user.expLevel ?? "beginner",
-  //   collabTypes:  user.collabTypes ?? [],
-  //   skills:       user.skills    ?? [],
-  //   bio:          user.bio       ?? "Your profile. Edit in Settings.",
-  //   avatar:       user.avatar    ?? null,
-  //   rating:       5.0,
-  // } : null;
+  const ownProfile = user ? {
+    id:           "own",
+    name:         user.fullName  ?? user.firstName ?? "You",
+    businessName: user.businessName ?? "",
+    role:         "Fashion Artisan",
+    category:     user.category  ?? "",
+    location:     user.location  ?? (user.city ? `${user.city}, ${user.country ?? ""}` : (user.country ?? "")),
+    country:      user.country   ?? "",
+    experience:   user.yearsExp  ?? 0,
+    experienceLevel: user.expLevel ?? "beginner",
+    collabTypes:  user.collabTypes ?? [],
+    skills:       user.skills    ?? [],
+    bio:          user.bio       ?? "Your profile. Edit in Settings.",
+    avatar:       user.avatar    ?? null,
+    rating:       5.0,
+  } : null;
 
   /* All artisans to search/filter (own profile first if it has a name) */
   const pool = useMemo(() => {
@@ -343,14 +347,14 @@ export default function ArtisanNetwork() {
       )}
 
       {/* Own profile card (pinned at top if user has a name) */}
-      {/* {ownProfile && ownProfile.name !== "You" && (
+      {ownProfile && ownProfile.name !== "You" && (
         <div className="an__own-section">
           <p className="an__own-label">Your Profile</p>
           <div className="an__grid an__grid--one">
             <ArtisanCard artisan={ownProfile} isOwn={true} />
           </div>
         </div>
-      )} */}
+      )}
 
       {/* Grid */}
       {displayed.length === 0 ? (

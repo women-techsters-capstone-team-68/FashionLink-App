@@ -1,11 +1,28 @@
+/**
+ * DataContext.jsx — single source of truth for artisan orders + clients.
+ *
+ * Cross-portal linking:
+ *  - addOrder()    → also calls pushOrderToClient(clientEmail, order)
+ *  - updateOrder() → also calls pushOrderToClient(clientEmail, updated)
+ *  - deleteOrder() → also calls removeOrderFromClient(clientEmail, id)
+ *
+ * This means every artisan order action is mirrored into the client's
+ * own order bucket (fl:client:<email>:orders) instantly.
+ */
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
-import { useAuth }                   from "./AuthContext.jsx";
-import { ordersApi, clientsApi }     from "../services/api.js";
-import { getOrders, saveOrders, getClients, saveClients, generateId } from "../services/store.js";
+import { useAuth }               from "./AuthContext.jsx";
+import { ordersApi, clientsApi } from "../services/api.js";
+import {
+  getOrders, saveOrders,
+  getClients, saveClients,
+  generateId,
+  pushOrderToClient,
+  removeOrderFromClient,
+} from "../services/store.js";
 
 const DataContext = createContext(null);
 
-/* ── Normalise API order → internal shape ────────────────────── */
+/* ── Normalise API order ─────────────────────────────────────── */
 function normaliseOrder(raw) {
   const status = raw.status ?? "pending";
   const capitalised = status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, " ");
@@ -13,6 +30,7 @@ function normaliseOrder(raw) {
     id:           raw.order_number ?? String(raw.id),
     apiId:        raw.id ?? null,
     clientId:     raw.ClientId ?? raw.clientId ?? null,
+    clientEmail:  raw.clientEmail ?? raw.client?.email ?? null,
     client:       raw.client?.fullName ?? raw.client?.name ?? raw.clientName ?? "",
     description:  raw.description ?? "",
     notes:        raw.notes ?? "",
@@ -34,7 +52,7 @@ function normaliseOrder(raw) {
   };
 }
 
-/* ── Normalise API client → internal shape ───────────────────── */
+/* ── Normalise API client ────────────────────────────────────── */
 function normaliseClient(raw) {
   return {
     id:             String(raw.id),
@@ -59,10 +77,7 @@ export function DataProvider({ children }) {
   const [loadingOrders,  setLoadingOrders]  = useState(false);
   const [loadingClients, setLoadingClients] = useState(false);
 
-  /* ── Derive live order count per client ──────────────────────
-   * This is the ONLY correct source for orderCount.
-   * Never rely on a stored number — always compute from the array.
-   */
+  /* ── Live orderCount per client ──────────────────────────── */
   const clientsWithOrderCount = useMemo(() => {
     return clients.map((c) => ({
       ...c,
@@ -72,7 +87,13 @@ export function DataProvider({ children }) {
     }));
   }, [clients, orders]);
 
-  /* ── Load orders ───────────────────────────────────────────── */
+  /* ── Helper: get email for a client by id ────────────────── */
+  const getClientEmail = useCallback((clientId) => {
+    const found = clients.find((c) => c.id === clientId || c.apiId === clientId);
+    return found?.email ?? null;
+  }, [clients]);
+
+  /* ── Load orders ─────────────────────────────────────────── */
   const refreshOrders = useCallback(async () => {
     if (!userId) { setOrders([]); return; }
     const cached = getOrders(userId);
@@ -87,7 +108,7 @@ export function DataProvider({ children }) {
     }
   }, [userId]);
 
-  /* ── Load clients ──────────────────────────────────────────── */
+  /* ── Load clients ────────────────────────────────────────── */
   const refreshClients = useCallback(async () => {
     if (!userId) { setClients([]); return; }
     const cached = getClients(userId);
@@ -108,15 +129,19 @@ export function DataProvider({ children }) {
   }, [userId, refreshOrders, refreshClients]);
 
   /* ════════════════════════════════════════════════════════════
-     ORDERS CRUD
+     ORDERS CRUD — every write also mirrors to client's bucket
   ════════════════════════════════════════════════════════════ */
+
   const addOrder = async (formData) => {
-    const localId    = generateId("ORD");
-    const clientId   = formData.clientId ?? null;     // always the local client id
+    const localId   = generateId("ORD");
+    const clientId  = formData.clientId ?? null;
+    const clientEmail = getClientEmail(clientId) ?? formData.clientEmail ?? null;
+
     const optimistic = {
       id:           localId,
       apiId:        null,
       clientId,
+      clientEmail,
       client:       formData.clientName ?? "",
       description:  formData.description ?? "",
       notes:        formData.notes ?? "",
@@ -138,27 +163,31 @@ export function DataProvider({ children }) {
     setOrders(next);
     saveOrders(userId, next);
 
-    // Try API (best-effort)
+    // Mirror to client's order bucket immediately
+    pushOrderToClient(clientEmail, optimistic);
+
+    // Try API
     const apiBody = {
       clientId:     formData.apiClientId ?? formData.clientId,
       deliveryDate: formData.deliveryDate,
       description:  formData.description,
       notes:        formData.notes,
-      chest:        formData.chest    ? Number(formData.chest)    : undefined,
-      waist:        formData.waist    ? Number(formData.waist)    : undefined,
-      hip:          formData.hip      ? Number(formData.hip)      : undefined,
-      shoulder:     formData.shoulder ? Number(formData.shoulder) : undefined,
-      sleeve:       formData.sleeve   ? Number(formData.sleeve)   : undefined,
-      length:       formData.length   ? Number(formData.length)   : undefined,
+      chest:    formData.chest    ? Number(formData.chest)    : undefined,
+      waist:    formData.waist    ? Number(formData.waist)    : undefined,
+      hip:      formData.hip      ? Number(formData.hip)      : undefined,
+      shoulder: formData.shoulder ? Number(formData.shoulder) : undefined,
+      sleeve:   formData.sleeve   ? Number(formData.sleeve)   : undefined,
+      length:   formData.length   ? Number(formData.length)   : undefined,
     };
     const { data, error } = await ordersApi.create(apiBody);
     if (!error && data) {
-      const real    = normaliseOrder(data);
-      // Keep the local clientId so the profile page can still match it
-      real.clientId = clientId;
-      const updated = next.map((o) => (o.id === localId ? real : o));
+      const real      = normaliseOrder(data);
+      real.clientId   = clientId;
+      real.clientEmail = clientEmail;
+      const updated   = next.map((o) => (o.id === localId ? real : o));
       setOrders(updated);
       saveOrders(userId, updated);
+      pushOrderToClient(clientEmail, real);
       return { ok: true, order: real };
     }
     return { ok: true, order: optimistic };
@@ -174,11 +203,25 @@ export function DataProvider({ children }) {
     const next = orders.map((o) => (o.id === id ? updated : o));
     setOrders(next);
     saveOrders(userId, next);
+
+    // Mirror update to client
+    pushOrderToClient(updated.clientEmail ?? order.clientEmail, updated);
+
     if (order.apiId) {
       const apiPatch = {};
       if (patch.status)       apiPatch.status        = patch.status.toLowerCase().replace(/ /g, "_");
       if (patch.deliveryDate) apiPatch.delivery_date = patch.deliveryDate;
       if (patch.notes !== undefined) apiPatch.notes  = patch.notes;
+      if (patch.measurements) {
+        Object.assign(apiPatch, {
+          chest:    Number(patch.measurements.chest)    || undefined,
+          waist:    Number(patch.measurements.waist)    || undefined,
+          hip:      Number(patch.measurements.hip)      || undefined,
+          shoulder: Number(patch.measurements.shoulder) || undefined,
+          sleeve:   Number(patch.measurements.sleeve)   || undefined,
+          length:   Number(patch.measurements.length)   || undefined,
+        });
+      }
       await ordersApi.update(order.apiId, apiPatch);
     }
     return { ok: true, order: updated };
@@ -189,6 +232,7 @@ export function DataProvider({ children }) {
     const next  = orders.filter((o) => o.id !== id);
     setOrders(next);
     saveOrders(userId, next);
+    removeOrderFromClient(order?.clientEmail, id);
     if (order?.apiId) await ordersApi.delete(order.apiId);
     return { ok: true };
   };
@@ -196,6 +240,7 @@ export function DataProvider({ children }) {
   /* ════════════════════════════════════════════════════════════
      CLIENTS CRUD
   ════════════════════════════════════════════════════════════ */
+
   const addClient = async (formData) => {
     const localId  = generateId("cli");
     const clientId = `CLT-${String(clients.length + 1).padStart(3, "0")}`;
@@ -215,14 +260,14 @@ export function DataProvider({ children }) {
     saveClients(userId, next);
 
     const { data, error } = await clientsApi.create({
-      name:         formData.name,
-      email:        formData.email,
+      name:  formData.name,
+      email: formData.email,
       measurements: formData.measurements ?? {},
     });
     if (!error && data?.client) {
-      const real    = normaliseClient(data.client);
-      real.measurements = optimistic.measurements; // preserve local measurements
-      const updated = next.map((c) => (c.id === localId ? real : c));
+      const real        = normaliseClient(data.client);
+      real.measurements = optimistic.measurements;
+      const updated     = next.map((c) => (c.id === localId ? real : c));
       setClients(updated);
       saveClients(userId, updated);
       return { ok: true, client: real };
@@ -233,7 +278,6 @@ export function DataProvider({ children }) {
   const updateClient = async (id, patch) => {
     const client = clients.find((c) => c.id === id);
     if (!client) return { ok: false, error: "Client not found" };
-    // Deep-merge measurements so partial updates don't wipe existing keys
     const merged = { ...client, ...patch };
     if (patch.measurements) {
       merged.measurements = { ...client.measurements, ...patch.measurements };
@@ -247,7 +291,6 @@ export function DataProvider({ children }) {
 
   const deleteClient = async (id) => {
     const client = clients.find((c) => c.id === id);
-    // Also remove orders belonging to this client
     const updatedOrders = orders.filter((o) => o.clientId !== id && o.clientId !== client?.apiId);
     setClients(clients.filter((c) => c.id !== id));
     setOrders(updatedOrders);
@@ -260,11 +303,12 @@ export function DataProvider({ children }) {
   return (
     <DataContext.Provider value={{
       orders,
-      clients: clientsWithOrderCount,   // always has live orderCount
+      clients: clientsWithOrderCount,
       loadingOrders,
       loadingClients,
       refreshOrders,
       refreshClients,
+      getClientEmail,
       addOrder,    updateOrder,    deleteOrder,
       addClient,   updateClient,   deleteClient,
     }}>
