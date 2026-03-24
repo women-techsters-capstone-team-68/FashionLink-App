@@ -1,16 +1,17 @@
-// ArtisanNetwork.jsx — /artisan/network — 60 artisan profiles, filters, infinite scroll
+// ArtisanNetwork.jsx — /artisan/network — merged mock + real artisans, filters, infinite scroll
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useNavigate }   from "react-router-dom";
 import { useAuth }       from "../../../context/AuthContext.jsx";
-import { artisans, NETWORK_CATEGORIES, LOCATIONS, 
-        EXPERIENCE_LEVELS, COLLAB_TYPES, } from "../../../data/artisanData.js";
-import ArtisanContact from "../ArtisanContact/ArtisanContact.jsx";
-
+import { artisans, EXPERIENCE_LEVELS, COLLAB_TYPES, 
+          LOCATIONS, NETWORK_CATEGORIES } from "../../../data/artisanData.js";
+import { getAllArtisans } from "../../../services/store.js";
 import "./ArtisanNetwork.css";
 
 const PAGE_SIZE = 12;
 
-/* ── Stars ───────────────────────────────────────────────────── */
+// Flat category list for filter
+const CATEGORY_KEYS = Object.keys(NETWORK_CATEGORIES);
+
 function Stars({ rating }) {
   return (
     <span className="an-stars">
@@ -22,27 +23,25 @@ function Stars({ rating }) {
   );
 }
 
-/* ── Single artisan card ─────────────────────────────────────── */
 function ArtisanCard({ artisan, isOwn }) {
   const navigate = useNavigate();
+  // For own profile, navigate to /artisan/settings since there's no static profile page
+  const profileTarget = isOwn ? "/artisan/settings" : `/artisan/network/${artisan.id}`;
+  const contactTarget = isOwn
+    ? `/artisan/network/${artisan.id}?view=contact`
+    : `/artisan/network/${artisan.id}?view=contact`;
 
   return (
-    <div className={`an-card ${isOwn ? "an-card--own" : ""}`}>
+    <div className="an-card">
       {isOwn && <span className="an-card__you-badge">You</span>}
-
       <div className="an-card__head">
-        {artisan.avatar ? (
-          <img className="an-card__avatar" src={artisan.avatar} alt={artisan.name} />
-        ) : (
-          <div className="an-card__avatar an-card__avatar--initials">
-            {artisan.name.charAt(0)}
-          </div>
-        )}
+        {artisan.avatar
+          ? <img className="an-card__avatar" src={artisan.avatar} alt={artisan.name} />
+          : <div className="an-card__avatar an-card__avatar--initials">{artisan.name.charAt(0)}</div>
+        }
         <div>
           <p className="an-card__name">{artisan.name}</p>
-          {artisan.businessName && (
-            <p className="an-card__business">{artisan.businessName}</p>
-          )}
+          {artisan.businessName && <p className="an-card__business">{artisan.businessName}</p>}
           <p className="an-card__role">{artisan.role}</p>
         </div>
       </div>
@@ -55,7 +54,7 @@ function ArtisanCard({ artisan, isOwn }) {
 
       <div className="an-card__meta">
         <span className="an-card__location">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
             <circle cx="12" cy="10" r="3"/>
           </svg>
@@ -64,16 +63,16 @@ function ArtisanCard({ artisan, isOwn }) {
         <Stars rating={artisan.rating ?? 4.5} />
       </div>
 
-      <p className="an-card__exp">{artisan.experience} years Experience</p>
+      <p className="an-card__exp">{artisan.experience} yrs Experience</p>
       <p className="an-card__bio">{artisan.bio}</p>
 
       <div className="an-card__actions">
         <button className="an-card__btn-primary" type="button"
-          onClick={() => navigate(`/artisan/network/${artisan.id}`)}>
+          onClick={() => navigate(profileTarget)}>
           View Profile
         </button>
         <button className="an-card__btn-outline" type="button"
-          onClick={() => navigate(`/artisan/network/${artisan.id}?view=contact`)}>
+          onClick={() => navigate(contactTarget)}>
           Invite to Collaborate
         </button>
       </div>
@@ -81,7 +80,6 @@ function ArtisanCard({ artisan, isOwn }) {
   );
 }
 
-/* ── Filter Drawer ───────────────────────────────────────────── */
 function FilterDrawer({ open, onClose, filters, onApply }) {
   const [local, setLocal] = useState(filters);
   const drawerRef = useRef(null);
@@ -90,11 +88,9 @@ function FilterDrawer({ open, onClose, filters, onApply }) {
 
   useEffect(() => {
     if (!open) return;
-    const handler = (e) => {
-      if (drawerRef.current && !drawerRef.current.contains(e.target)) onClose();
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    const h = (e) => { if (drawerRef.current && !drawerRef.current.contains(e.target)) onClose(); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
   }, [open, onClose]);
 
   useEffect(() => {
@@ -103,22 +99,17 @@ function FilterDrawer({ open, onClose, filters, onApply }) {
     return () => document.removeEventListener("keydown", h);
   }, [onClose]);
 
-  const toggle = (key, val) =>
-    setLocal((prev) => ({ ...prev, [key]: prev[key] === val ? "" : val }));
-
-  const clear = () => setLocal({ category: "", country: "", experience: "", collab: "" });
-  const apply = () => { onApply(local); onClose(); };
+  const toggle = (k, v) => setLocal((p) => ({ ...p, [k]: p[k] === v ? "" : v }));
+  const clear  = () => setLocal({ category: "", country: "", experience: "", collab: "" });
+  const apply  = () => { onApply(local); onClose(); };
 
   return (
     <>
-      <div className={`an-drawer-backdrop ${open ? "an-drawer-backdrop--open" : ""}`}
-        onClick={onClose} aria-hidden="true" />
-      <div className={`an-drawer ${open ? "an-drawer--open" : ""}`} ref={drawerRef}
-        role="dialog" aria-modal="true" aria-label="Filters">
-
+      <div className={`an-drawer-backdrop ${open ? "an-drawer-backdrop--open" : ""}`} onClick={onClose} aria-hidden="true" />
+      <div className={`an-drawer ${open ? "an-drawer--open" : ""}`} ref={drawerRef} role="dialog" aria-modal="true">
         <div className="an-drawer__header">
           <p className="an-drawer__title">Filters</p>
-          <button className="an-drawer__close" type="button" onClick={onClose} aria-label="Close filters">
+          <button className="an-drawer__close" type="button" onClick={onClose}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
@@ -126,11 +117,9 @@ function FilterDrawer({ open, onClose, filters, onApply }) {
         </div>
 
         <div className="an-drawer__body">
-
-          {/* Category */}
           <div className="an-drawer__section">
             <p className="an-drawer__section-title">Category</p>
-            {NETWORK_CATEGORIES.map((cat) => (
+            {CATEGORY_KEYS.map((cat) => (
               <button key={cat} type="button"
                 className={`an-drawer__cat-item ${local.category === cat ? "an-drawer__cat-item--active" : ""}`}
                 onClick={() => toggle("category", cat)}>
@@ -139,7 +128,6 @@ function FilterDrawer({ open, onClose, filters, onApply }) {
             ))}
           </div>
 
-          {/* Country */}
           <div className="an-drawer__section">
             <p className="an-drawer__section-title">Location (Country)</p>
             {LOCATIONS.map(({ country }) => (
@@ -151,28 +139,26 @@ function FilterDrawer({ open, onClose, filters, onApply }) {
             ))}
           </div>
 
-          {/* Experience */}
           <div className="an-drawer__section">
             <p className="an-drawer__section-title">Experience Level</p>
             {EXPERIENCE_LEVELS.map((lvl) => (
               <label key={lvl.id} className="an-drawer__radio-row">
                 <div className={`an-drawer__radio ${local.experience === lvl.id ? "an-drawer__radio--checked" : ""}`}
-                  onClick={() => toggle("experience", lvl.id)}
-                  role="radio" aria-checked={local.experience === lvl.id} tabIndex={0}
+                  onClick={() => toggle("experience", lvl.id)} role="radio"
+                  aria-checked={local.experience === lvl.id} tabIndex={0}
                   onKeyDown={(e) => e.key === "Enter" && toggle("experience", lvl.id)} />
                 <span>{lvl.label}</span>
               </label>
             ))}
           </div>
 
-          {/* Collaboration Type */}
           <div className="an-drawer__section">
             <p className="an-drawer__section-title">Collaboration Type</p>
             {COLLAB_TYPES.map((ct) => (
               <label key={ct.id} className="an-drawer__radio-row">
                 <div className={`an-drawer__radio ${local.collab === ct.id ? "an-drawer__radio--checked" : ""}`}
-                  onClick={() => toggle("collab", ct.id)}
-                  role="radio" aria-checked={local.collab === ct.id} tabIndex={0}
+                  onClick={() => toggle("collab", ct.id)} role="radio"
+                  aria-checked={local.collab === ct.id} tabIndex={0}
                   onKeyDown={(e) => e.key === "Enter" && toggle("collab", ct.id)} />
                 <span>{ct.label}</span>
               </label>
@@ -189,7 +175,6 @@ function FilterDrawer({ open, onClose, filters, onApply }) {
   );
 }
 
-/* ── Sort dropdown ───────────────────────────────────────────── */
 const SORT_OPTS = [
   { id: "newest",  label: "Newest"           },
   { id: "rating",  label: "Top Rated"        },
@@ -230,54 +215,53 @@ function SortDropdown({ value, onChange }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════ */
 export default function ArtisanNetwork() {
-  const { user }                         = useAuth();
-  const [query,       setQuery]          = useState("");
-  const [sort,        setSort]           = useState("newest");
-  const [filterOpen,  setFilterOpen]     = useState(false);
-  const [filters,     setFilters]        = useState({ category: "", country: "", experience: "", collab: "" });
-  const [page,        setPage]           = useState(1);
-  const loaderRef                        = useRef(null);
+  const { user } = useAuth();
+  const [query,      setQuery]      = useState("");
+  const [sort,       setSort]       = useState("newest");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filters,    setFilters]    = useState({ category: "", country: "", experience: "", collab: "" });
+  const [page,       setPage]       = useState(1);
+  const loaderRef = useRef(null);
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
-  /* Build own profile card from Settings data */
-  const ownProfile = user ? {
-    id:           "own",
-    name:         user.fullName  ?? user.firstName ?? "You",
-    businessName: user.businessName ?? "",
-    role:         "Fashion Artisan",
-    category:     user.category  ?? "",
-    location:     user.location  ?? (user.city ? `${user.city}, ${user.country ?? ""}` : (user.country ?? "")),
-    country:      user.country   ?? "",
-    experience:   user.yearsExp  ?? 0,
+  // Merged pool: real signed-up artisans + mock data (deduped by id)
+  const pool = useMemo(() => getAllArtisans(artisans), []);
+
+  // Own profile from Settings (shown as normal card)
+  const ownId = user?.id ?? user?.email ?? null;
+  const ownProfile = user && (user.fullName || user.firstName) ? {
+    id:              ownId ?? "own",
+    name:            user.fullName ?? user.firstName ?? "You",
+    businessName:    user.businessName ?? "",
+    role:            "Fashion Artisan",
+    category:        (user.categories ?? [])[0] ?? "",
+    location:        user.location ?? [user.city, user.state, user.country].filter(Boolean).join(", "),
+    country:         user.country ?? "",
+    experience:      user.yearsExp ?? 0,
     experienceLevel: user.expLevel ?? "beginner",
-    collabTypes:  user.collabTypes ?? [],
-    skills:       user.skills    ?? [],
-    bio:          user.bio       ?? "Your profile. Edit in Settings.",
-    avatar:       user.avatar    ?? null,
-    rating:       5.0,
+    collabTypes:     user.collabTypes ?? [],
+    skills:          user.skills ?? [],
+    bio:             user.bio ?? "Your profile — edit in Settings.",
+    avatar:          user.avatar ?? null,
+    rating:          5.0,
+    isRealUser:      true,
   } : null;
 
-  /* All artisans to search/filter (own profile first if it has a name) */
-  const pool = useMemo(() => {
-    const base = [...artisans];
-    return base;
-  }, []);
+  useEffect(() => { setPage(1); }, [query, filters, sort]);
 
-  /* Filter + sort */
   const processed = useMemo(() => {
     const q = query.toLowerCase().trim();
     return pool
       .filter((a) => {
-        const matchSearch = !q ||
+        const matchSearch  = !q ||
           (a.name         ?? "").toLowerCase().includes(q) ||
           (a.businessName ?? "").toLowerCase().includes(q);
-        const matchCat    = !filters.category   || a.category        === filters.category;
-        const matchCountry= !filters.country    || a.country         === filters.country;
-        const matchExp    = !filters.experience || a.experienceLevel  === filters.experience;
-        const matchCollab = !filters.collab     || (a.collabTypes ?? []).includes(filters.collab);
+        const matchCat     = !filters.category   || a.category === filters.category;
+        const matchCountry = !filters.country    || a.country  === filters.country;
+        const matchExp     = !filters.experience || a.experienceLevel === filters.experience;
+        const matchCollab  = !filters.collab     || (a.collabTypes ?? []).includes(filters.collab);
         return matchSearch && matchCat && matchCountry && matchExp && matchCollab;
       })
       .sort((a, b) => {
@@ -288,17 +272,11 @@ export default function ArtisanNetwork() {
       });
   }, [pool, query, filters, sort]);
 
-  /* Infinite scroll — reset page when filters/sort/query change */
-  useEffect(() => { setPage(1); }, [query, filters, sort]);
-
   const displayed = processed.slice(0, page * PAGE_SIZE);
   const hasMore   = displayed.length < processed.length;
 
-  /* Intersection observer for infinite scroll */
   const handleObserver = useCallback((entries) => {
-    if (entries[0].isIntersecting && hasMore) {
-      setPage((p) => p + 1);
-    }
+    if (entries[0].isIntersecting && hasMore) setPage((p) => p + 1);
   }, [hasMore]);
 
   useEffect(() => {
@@ -313,7 +291,6 @@ export default function ArtisanNetwork() {
 
   return (
     <div className="an">
-      {/* Toolbar */}
       <div className="an__toolbar">
         <div className="an__search-wrap">
           <svg className="an__search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -326,8 +303,7 @@ export default function ArtisanNetwork() {
         <button className={`an__filter-btn ${activeFilterCount > 0 ? "an__filter-btn--active" : ""}`}
           type="button" onClick={() => setFilterOpen(true)}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-            <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/>
-            <line x1="12" y1="18" x2="20" y2="18"/>
+            <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="20" y2="12"/><line x1="12" y1="18" x2="20" y2="18"/>
             <circle cx="4"  cy="6"  r="2" fill="currentColor" stroke="none"/>
             <circle cx="8"  cy="12" r="2" fill="currentColor" stroke="none"/>
             <circle cx="12" cy="18" r="2" fill="currentColor" stroke="none"/>
@@ -339,28 +315,21 @@ export default function ArtisanNetwork() {
         <SortDropdown value={sort} onChange={setSort} />
       </div>
 
-      {/* Results count */}
       {(query || activeFilterCount > 0) && (
         <p className="an__results-meta">
           {processed.length} artisan{processed.length !== 1 ? "s" : ""} found
         </p>
       )}
 
-      {/* Own profile card (pinned at top if user has a name) */}
-      {ownProfile && ownProfile.name !== "You" && (
-        <div className="an__own-section">
-          <p className="an__own-label">Your Profile</p>
-          <div className="an__grid an__grid--one">
-            <ArtisanCard artisan={ownProfile} isOwn={true} />
-          </div>
+      {/* Own profile card — rendered as a normal grid card */}
+      {ownProfile && (
+        <div className="an__grid">
+          <ArtisanCard artisan={ownProfile} isOwn={true} />
         </div>
       )}
 
-      {/* Grid */}
       {displayed.length === 0 ? (
-        <div className="an__empty">
-          <p>No artisans match your search or filters.</p>
-        </div>
+        <div className="an__empty"><p>No artisans match your search or filters.</p></div>
       ) : (
         <div className="an__grid">
           {displayed.map((a) => (
@@ -369,13 +338,11 @@ export default function ArtisanNetwork() {
         </div>
       )}
 
-      {/* Infinite scroll sentinel */}
       <div ref={loaderRef} className="an__loader">
         {hasMore && <span className="an__loader-text">Loading more…</span>}
       </div>
 
-      <FilterDrawer open={filterOpen} onClose={closeFilter}
-        filters={filters} onApply={setFilters} />
+      <FilterDrawer open={filterOpen} onClose={closeFilter} filters={filters} onApply={setFilters} />
     </div>
   );
 }
