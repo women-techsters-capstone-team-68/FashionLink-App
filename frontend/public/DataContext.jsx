@@ -1,15 +1,17 @@
-// DataContext.jsx — orders + clients for artisan portal. Orders mirror to client buckets.
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
-import { useAuth }               from "./AuthContext.jsx";
-import { ordersApi, clientsApi } from "../services/api.js";
+import { useAuth }               from "../src/context/AuthContext.jsx";
+import { ordersApi, clientsApi } from "../src/services/api.js";
 import {
-  getOrders, saveOrders, getClients, saveClients, generateId,
-  pushOrderToClient, removeOrderFromClient,
-  registerArtisan,
-} from "../services/store.js";
+  getOrders, saveOrders,
+  getClients, saveClients,
+  generateId,
+  pushOrderToClient,
+  removeOrderFromClient,
+} from "../src/services/store.js";
 
 const DataContext = createContext(null);
 
+/* ── Normalise API order ─────────────────────────────────────── */
 function normaliseOrder(raw) {
   const status = raw.status ?? "pending";
   const capitalised = status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, " ");
@@ -29,12 +31,17 @@ function normaliseOrder(raw) {
     status:       capitalised,
     image:        raw.styleReferenceImageUrl ?? null,
     measurements: {
-      chest: raw.chest ?? "", waist: raw.waist ?? "", hip: raw.hip ?? "",
-      shoulder: raw.shoulder ?? "", sleeve: raw.sleeve ?? "", length: raw.length ?? "",
+      chest:    raw.chest    ?? "",
+      waist:    raw.waist    ?? "",
+      hip:      raw.hip      ?? "",
+      shoulder: raw.shoulder ?? "",
+      sleeve:   raw.sleeve   ?? "",
+      length:   raw.length   ?? "",
     },
   };
 }
 
+/* ── Normalise API client ────────────────────────────────────── */
 function normaliseClient(raw) {
   return {
     id:             String(raw.id),
@@ -49,6 +56,7 @@ function normaliseClient(raw) {
   };
 }
 
+/* ══════════════════════════════════════════════════════════════ */
 export function DataProvider({ children }) {
   const { user } = useAuth();
   const userId   = user?.id ?? user?.email ?? null;
@@ -58,51 +66,42 @@ export function DataProvider({ children }) {
   const [loadingOrders,  setLoadingOrders]  = useState(false);
   const [loadingClients, setLoadingClients] = useState(false);
 
-  // Live orderCount per client
-  const clientsWithOrderCount = useMemo(() => clients.map((c) => ({
-    ...c,
-    orderCount: orders.filter((o) => o.clientId === c.id || o.clientId === c.apiId).length,
-  })), [clients, orders]);
+  /* ── Live orderCount per client ──────────────────────────── */
+  const clientsWithOrderCount = useMemo(() => {
+    return clients.map((c) => ({
+      ...c,
+      orderCount: orders.filter(
+        (o) => o.clientId === c.id || o.clientId === c.apiId
+      ).length,
+    }));
+  }, [clients, orders]);
 
+  /* ── Helper: get email for a client by id ────────────────── */
   const getClientEmail = useCallback((clientId) => {
     const found = clients.find((c) => c.id === clientId || c.apiId === clientId);
     return found?.email ?? null;
   }, [clients]);
 
-  // PRIORITY 1 FIX: robust order persistence
-  // 1. Always show localStorage immediately (no flash)
-  // 2. Fetch from API in background
-  // 3. Merge: API data wins for items that exist in API; keep local-only items
-  // 4. Save merged result back to localStorage
+  /* ── Load orders ─────────────────────────────────────────── */
   const refreshOrders = useCallback(async () => {
     if (!userId) { setOrders([]); return; }
-
-    // Step 1: show cached immediately
     const cached = getOrders(userId);
-    if (cached.length > 0) setOrders(cached);
-
+    setOrders(cached);
     setLoadingOrders(true);
     const { data, error } = await ordersApi.list();
     setLoadingOrders(false);
-
     if (!error && Array.isArray(data)) {
-      const fromApi = data.map(normaliseOrder);
-      // Merge: keep any locally-created orders not yet in API (no apiId match)
-      const apiIds = new Set(fromApi.map((o) => String(o.apiId ?? o.id)));
-      const localOnly = cached.filter((o) => o.apiId === null && !apiIds.has(o.id));
-      const merged = [...fromApi, ...localOnly];
-      setOrders(merged);
-      saveOrders(userId, merged);
-    } else {
-      // API failed — keep showing cached data, don't wipe it
-      if (cached.length > 0) setOrders(cached);
+      const normalised = data.map(normaliseOrder);
+      setOrders(normalised);
+      saveOrders(userId, normalised);
     }
   }, [userId]);
 
+  /* ── Load clients ────────────────────────────────────────── */
   const refreshClients = useCallback(async () => {
     if (!userId) { setClients([]); return; }
     const cached = getClients(userId);
-    if (cached.length > 0) setClients(cached);
+    setClients(cached);
     setLoadingClients(true);
     const { data, error } = await clientsApi.list();
     setLoadingClients(false);
@@ -114,60 +113,37 @@ export function DataProvider({ children }) {
   }, [userId]);
 
   useEffect(() => {
-    if (userId) {
-      refreshOrders();
-      refreshClients();
-      // Register artisan in global registry so they appear in network
-      if (user?.role === "artisan") {
-        registerArtisan({
-          id:           userId,
-          name:         user.fullName ?? user.firstName ?? "",
-          email:        user.email ?? "",
-          businessName: user.businessName ?? "",
-          role:         "Fashion Artisan",
-          location:     user.location ?? "",
-          country:      user.country ?? "",
-          experience:   user.yearsExp ?? 0,
-          experienceLevel: user.expLevel ?? "beginner",
-          categories:   user.categories ?? [],
-          collabTypes:  user.collabTypes ?? [],
-          skills:       user.skills ?? [],
-          bio:          user.bio ?? "",
-          avatar:       user.avatar ?? null,
-          phones:       user.phones ?? [],
-          socials:      user.socials ?? {},
-          address:      user.address ?? "",
-          portfolioLinks: user.portfolioLinks ?? [],
-          rating:       5.0,
-          isRealUser:   true,
-        });
-      }
-    } else {
-      setOrders([]);
-      setClients([]);
-    }
-  }, [userId]);
+    if (userId) { refreshOrders(); refreshClients(); }
+    else        { setOrders([]);   setClients([]);   }
+  }, [userId, refreshOrders, refreshClients]);
 
-  // CRUD — every write also mirrors to client's bucket
+  /* ════════════════════════════════════════════════════════════
+     ORDERS CRUD — every write also mirrors to client's bucket
+  ════════════════════════════════════════════════════════════ */
 
   const addOrder = async (formData) => {
-    const localId     = generateId("ORD");
-    const clientId    = formData.clientId ?? null;
+    const localId   = generateId("ORD");
+    const clientId  = formData.clientId ?? null;
     const clientEmail = getClientEmail(clientId) ?? formData.clientEmail ?? null;
 
     const optimistic = {
-      id: localId, apiId: null, clientId, clientEmail,
-      client: formData.clientName ?? "",
-      description: formData.description ?? "", notes: formData.notes ?? "",
-      delivery: formData.deliveryDate
-        ? new Date(formData.deliveryDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-        : "",
+      id:           localId,
+      apiId:        null,
+      clientId,
+      clientEmail,
+      client:       formData.clientName ?? "",
+      description:  formData.description ?? "",
+      notes:        formData.notes ?? "",
+      delivery:     formData.deliveryDate
+                      ? new Date(formData.deliveryDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                      : "",
       deliveryDate: formData.deliveryDate ?? "",
-      placedDate: new Date().toISOString(),
-      status: "Pending", image: formData.image ?? null,
+      placedDate:   new Date().toISOString(),
+      status:       "Pending",
+      image:        formData.image ?? null,
       measurements: {
         chest: formData.chest ?? "", waist: formData.waist ?? "",
-        hip: formData.hip ?? "", shoulder: formData.shoulder ?? "",
+        hip:   formData.hip   ?? "", shoulder: formData.shoulder ?? "",
         sleeve: formData.sleeve ?? "", length: formData.length ?? "",
       },
     };
@@ -175,11 +151,16 @@ export function DataProvider({ children }) {
     const next = [optimistic, ...orders];
     setOrders(next);
     saveOrders(userId, next);
+
+    // Mirror to client's order bucket immediately
     pushOrderToClient(clientEmail, optimistic);
 
+    // Try API
     const apiBody = {
-      clientId: formData.apiClientId ?? formData.clientId,
-      deliveryDate: formData.deliveryDate, description: formData.description, notes: formData.notes,
+      clientId:     formData.apiClientId ?? formData.clientId,
+      deliveryDate: formData.deliveryDate,
+      description:  formData.description,
+      notes:        formData.notes,
       chest:    formData.chest    ? Number(formData.chest)    : undefined,
       waist:    formData.waist    ? Number(formData.waist)    : undefined,
       hip:      formData.hip      ? Number(formData.hip)      : undefined,
@@ -189,10 +170,10 @@ export function DataProvider({ children }) {
     };
     const { data, error } = await ordersApi.create(apiBody);
     if (!error && data) {
-      const real = normaliseOrder(data);
-      real.clientId = clientId;
+      const real      = normaliseOrder(data);
+      real.clientId   = clientId;
       real.clientEmail = clientEmail;
-      const updated = next.map((o) => (o.id === localId ? real : o));
+      const updated   = next.map((o) => (o.id === localId ? real : o));
       setOrders(updated);
       saveOrders(userId, updated);
       pushOrderToClient(clientEmail, real);
@@ -211,7 +192,10 @@ export function DataProvider({ children }) {
     const next = orders.map((o) => (o.id === id ? updated : o));
     setOrders(next);
     saveOrders(userId, next);
+
+    // Mirror update to client
     pushOrderToClient(updated.clientEmail ?? order.clientEmail, updated);
+
     if (order.apiId) {
       const apiPatch = {};
       if (patch.status)       apiPatch.status        = patch.status.toLowerCase().replace(/ /g, "_");
@@ -242,22 +226,37 @@ export function DataProvider({ children }) {
     return { ok: true };
   };
 
+  /* ════════════════════════════════════════════════════════════
+     CLIENTS CRUD
+  ════════════════════════════════════════════════════════════ */
+
   const addClient = async (formData) => {
     const localId  = generateId("cli");
     const clientId = `CLT-${String(clients.length + 1).padStart(3, "0")}`;
     const optimistic = {
-      id: localId, apiId: null, clientId,
-      name: formData.name ?? "", email: formData.email ?? "", phone: formData.phone ?? "",
-      lastOrder: "", lastOrderShort: "", measurements: formData.measurements ?? {},
+      id:             localId,
+      apiId:          null,
+      clientId,
+      name:           formData.name  ?? "",
+      email:          formData.email ?? "",
+      phone:          formData.phone ?? "",
+      lastOrder:      "",
+      lastOrderShort: "",
+      measurements:   formData.measurements ?? {},
     };
     const next = [optimistic, ...clients];
     setClients(next);
     saveClients(userId, next);
-    const { data, error } = await clientsApi.create({ name: formData.name, email: formData.email, measurements: formData.measurements ?? {} });
+
+    const { data, error } = await clientsApi.create({
+      name:  formData.name,
+      email: formData.email,
+      measurements: formData.measurements ?? {},
+    });
     if (!error && data?.client) {
-      const real = normaliseClient(data.client);
+      const real        = normaliseClient(data.client);
       real.measurements = optimistic.measurements;
-      const updated = next.map((c) => (c.id === localId ? real : c));
+      const updated     = next.map((c) => (c.id === localId ? real : c));
       setClients(updated);
       saveClients(userId, updated);
       return { ok: true, client: real };
@@ -269,7 +268,9 @@ export function DataProvider({ children }) {
     const client = clients.find((c) => c.id === id);
     if (!client) return { ok: false, error: "Client not found" };
     const merged = { ...client, ...patch };
-    if (patch.measurements) merged.measurements = { ...client.measurements, ...patch.measurements };
+    if (patch.measurements) {
+      merged.measurements = { ...client.measurements, ...patch.measurements };
+    }
     const next = clients.map((c) => (c.id === id ? merged : c));
     setClients(next);
     saveClients(userId, next);
@@ -290,11 +291,15 @@ export function DataProvider({ children }) {
 
   return (
     <DataContext.Provider value={{
-      orders, clients: clientsWithOrderCount,
-      loadingOrders, loadingClients,
-      refreshOrders, refreshClients, getClientEmail,
-      addOrder, updateOrder, deleteOrder,
-      addClient, updateClient, deleteClient,
+      orders,
+      clients: clientsWithOrderCount,
+      loadingOrders,
+      loadingClients,
+      refreshOrders,
+      refreshClients,
+      getClientEmail,
+      addOrder,    updateOrder,    deleteOrder,
+      addClient,   updateClient,   deleteClient,
     }}>
       {children}
     </DataContext.Provider>

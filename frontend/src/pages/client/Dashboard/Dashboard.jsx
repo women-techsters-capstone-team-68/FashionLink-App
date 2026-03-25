@@ -1,7 +1,3 @@
-// Client Dashboard — /client/dashboard
-// Uses same artisan pool as ArtisanNetwork (real + mock merged via getAllArtisans).
-// "See All" → /artisan/network, "View Profile" → /artisan/network/:id,
-// "Contact Artisan" → /artisan/network/:id?view=contact
 import { useState, useMemo } from "react";
 import { useNavigate }       from "react-router-dom";
 import { useAuth }           from "../../../context/AuthContext.jsx";
@@ -48,12 +44,12 @@ function ArtisanCard({ artisan }) {
       </div>
       <div className="artisan-card-actions">
         <button className="view-profile-btn"
-          onClick={() => navigate(`/artisan/network/${artisan.id}`)}>
+          onClick={() => navigate(`/client/artisans/${artisan.id}`)}>
           View Profile
         </button>
         {/* Contact Artisan replaces Message */}
         <button className="message-artisan-btn"
-          onClick={() => navigate(`/artisan/network/${artisan.id}?view=contact`)}>
+          onClick={() => navigate(`/client/artisans/${artisan.id}/contact`)}>
           Contact Artisan
         </button>
       </div>
@@ -108,8 +104,8 @@ export default function ClientDashboard() {
           <div className="dashboard-section-title">
             {q ? `Results for "${searchQuery}" (${filteredArtisans.length})` : "Top Rated Artisans"}
           </div>
-          <button className="see-all-btn" onClick={() => navigate("/artisan/network")}>
-            See all ({topRated.length}) →
+          <button className="see-all-btn" onClick={() => navigate("/client/artisans")}>
+            See all →
           </button>
         </div>
 

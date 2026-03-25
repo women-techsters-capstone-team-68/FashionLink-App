@@ -333,7 +333,7 @@ export default function ArtisanNetwork() {
       ) : (
         <div className="an__grid">
           {displayed.map((a) => (
-            <ArtisanCard key={a.id} artisan={a} isOwn={false} />
+            <ArtisanCard key={a.id} artisan={a} />
           ))}
         </div>
       )}

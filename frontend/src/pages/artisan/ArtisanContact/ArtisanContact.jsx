@@ -1,6 +1,3 @@
-// ArtisanContact.jsx — /artisan/network/:id/contact
-// Contact page for a specific artisan. Shows profile image, phones, socials.
-// "Message Artisan" routes to /artisan/coming-soon.
 import { useNavigate } from "react-router-dom";
 import { useAuth }                from "../../../context/AuthContext.jsx";
 import { artisans }               from "../../../data/artisanData.js";
