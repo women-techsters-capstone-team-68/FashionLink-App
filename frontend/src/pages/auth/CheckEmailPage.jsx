@@ -1,8 +1,3 @@
-/**
- * CheckEmailPage.jsx  —  route: /check-email
- * Shown after submitting forgot-password form.
- * Matches RESET_PASSWORD.png design.
- */
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import "./CheckEmailPage.css";
 
