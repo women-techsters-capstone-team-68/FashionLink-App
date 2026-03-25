@@ -57,10 +57,10 @@ const IconSparkle = () => (
 );
 
 const FEATURES = [
-  { icon: <IconBox />,    title: "Order Management", desc: "Efficiently manage all your client orders with intuitive tools and real-time tracking." },
+  { icon: <IconBox />,    title: "Order Management",  desc: "Efficiently manage all your client orders with intuitive tools and real-time tracking." },
   { icon: <IconStar />,   title: "AI Insights",       desc: "Get intelligent deadline alerts, workload insights, and measurement validation." },
   { icon: <IconUsers />,  title: "Client Portal",     desc: "Provide clients with transparent order tracking and seamless communication." },
-  { icon: <IconBar />,    title: "Analytics",         desc: "Track performance metrics, completion rates, and revenue trends." },
+  { icon: <IconBar />,    title: "Fashion Ecosystem", desc: "Join hundreds of fashion artisans managing their orders efficiently." },
   { icon: <IconShield />, title: "Secure & Reliable", desc: "Your data is protected with enterprise-grade security and regular backups." },
   { icon: <IconZap />,    title: "Fast & Responsive", desc: "Built for speed with a responsive design that works on all devices." },
 ];

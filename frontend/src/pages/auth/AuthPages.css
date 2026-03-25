@@ -1,9 +1,3 @@
-/* ════════════════════════════════════════════════════════════════
-   AuthPages.css — shared by LoginPage.jsx and SignupPage.jsx
-   prefix: auth-
-   Dark card on navy background, matching the app's design language.
-   ════════════════════════════════════════════════════════════════ */
-
 /* ── Full-page wrapper ───────────────────────────────────────── */
 .auth-page {
   min-height: 100vh;
@@ -16,7 +10,7 @@
   font-family: 'DM Sans', sans-serif;
 }
 
-/* ── Card ────────────────────────────────────────────────────── */
+/* ── Card ─────────────── */
 .auth-card {
   width: 100%;
   max-width: 420px;
@@ -31,7 +25,7 @@
   animation: fadeUp 0.35s ease both;
 }
 
-/* ── Logo button ─────────────────────────────────────────────── */
+/* ── Logo button ───── */
 .auth-logo {
   display: flex;
   align-items: center;
@@ -51,7 +45,7 @@
   letter-spacing: -0.01em;
 }
 
-/* ── Headings ────────────────────────────────────────────────── */
+/* ── Headings ────────── */
 .auth-title {
   font-family: 'Sora', sans-serif;
   font-size: 1.55rem;
@@ -69,7 +63,7 @@
   margin: -12px 0 0;
 }
 
-/* ── Demo hint box ───────────────────────────────────────────── */
+/* ── Demo hint box ────── */
 .auth-demo-hint {
   background: rgba(108, 99, 255, 0.1);
   border: 1px solid rgba(108, 99, 255, 0.25);
@@ -86,14 +80,14 @@
   font-weight: 700;
 }
 
-/* ── Form ────────────────────────────────────────────────────── */
+/* ── Form ────────── */
 .auth-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* ── Role toggle ─────────────────────────────────────────────── */
+/* ── Role toggle ─────── */
 .auth-role-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -115,9 +109,9 @@
 }
 
 .auth-role-btn.active {
-  border-color: #6C63FF;
+  border-color: #6b63ffd2;
   background: rgba(108, 99, 255, 0.14);
-  color: #a5a0ff;
+  color: #a5a0ffc9;
 }
 
 .auth-role-btn:not(.active):hover {
@@ -125,7 +119,7 @@
   color: #8891aa;
 }
 
-/* ── Field ───────────────────────────────────────────────────── */
+/* ── Field ──────────── */
 .auth-field {
   display: flex;
   flex-direction: column;

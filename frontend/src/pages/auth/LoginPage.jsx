@@ -1,8 +1,3 @@
-/**
- * LoginPage.jsx  —  route: /login
- * Split-screen: image + features left | form right.
- * Matches SIGN_IN.png design.
- */
 import { useState }          from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth }           from "../../context/AuthContext.jsx";

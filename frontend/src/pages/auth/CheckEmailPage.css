@@ -1,9 +1,3 @@
-/* ════════════════════════════════════════════════════════════════
-   CheckEmailPage.css  —  prefix: ce-
-   Split-screen: solid dark navy left | white confirmation right
-   Matches RESET_PASSWORD.png
-   ════════════════════════════════════════════════════════════════ */
-
 .ce {
   min-height: 100vh;
   width: 100%;
@@ -12,9 +6,11 @@
   font-family: 'DM Sans', sans-serif;
 }
 
-/* ── LEFT ────────────────────────────────────────────────────── */
+/* ── LEFT ────── */
 .ce__panel {
   background: #13152a;
+  background: url("../../assets/homepageimages/Placeholder\ Image6.png")
+    center center / cover no-repeat;
   display: flex;
   flex-direction: column;
   padding: 28px 36px 36px;

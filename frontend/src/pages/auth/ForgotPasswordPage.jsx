@@ -1,9 +1,3 @@
-/**
- * ForgotPasswordPage.jsx  —  route: /forgot-password
- * Split-screen: dark panel left | form right.
- * Matches Forgot_password.png design.
- * On submit → navigates to /check-email
- */
 import { useState }          from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./ForgotPasswordPage.css";
@@ -21,12 +15,11 @@ export default function ForgotPasswordPage() {
     if (!/\S+@\S+\.\S+/.test(email)) { setError("Please enter a valid email address."); return; }
 
     setLoading(true);
-    /* TODO: replace with real API call:
-       await fetch("/api/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) }) */
+    /*await fetch("/api/auth/forgot-password", { method: "POST", body: JSON.stringify({ email }) }) */
     setTimeout(() => {
       setLoading(false);
       navigate("/check-email", { state: { email } });
-    }, 500);
+    }, 200);
   };
 
   return (
