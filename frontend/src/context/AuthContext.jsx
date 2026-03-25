@@ -132,8 +132,16 @@ export function AuthProvider({ children }) {
       saveToken(data.token);
 
       const session = buildSession(data.user ?? { email });
-      saveUser(session);
-      setUser(session);
+
+      // Merge back locally-saved profile fields (avatar, phones, socials, etc.)
+      // that the API does not return, so a re-login never wipes them.
+      const existing = loadUser();
+      const merged = existing && existing.email === session.email
+        ? { ...existing, ...session }   // keep local extras, overwrite API fields
+        : session;
+
+      saveUser(merged);
+      setUser(merged);
 
       // Register client in global registry so artisans can find them
       if (session.role === "client") {

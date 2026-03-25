@@ -1,15 +1,6 @@
-/**
- * store.js — Per-user localStorage store.
- *
- * Key pattern: fl:<userId>:<collection>
- *
- * SHARED KEYS (cross-user):
- *   fl:global:registeredClients   → clients who signed up via client portal
- *   fl:global:sharedOrders        → orders indexed by clientEmail for cross-portal linking
- */
+// store.js — per-user localStorage with cross-portal order linking and global registries
 
-/* ── Helpers ─────────────────────────────────────────────────── */
-function key(userId, collection) { return `fl:${userId}:${collection}`; }
+function key(userId, col) { return `fl:${userId}:${col}`; }
 
 function read(k) {
   try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch { return null; }
@@ -19,33 +10,31 @@ function write(k, value) {
   try { localStorage.setItem(k, JSON.stringify(value)); } catch {}
 }
 
-/* ── Orders (artisan's own) ──────────────────────────────────── */
+// Artisan orders (keyed by artisan userId)
 export function getOrders(userId) { return read(key(userId, "orders")) ?? []; }
 export function saveOrders(userId, orders) { write(key(userId, "orders"), orders); }
 
-/* ── Clients (artisan's own) ─────────────────────────────────── */
+// Artisan clients
 export function getClients(userId) { return read(key(userId, "clients")) ?? []; }
 export function saveClients(userId, clients) { write(key(userId, "clients"), clients); }
 
-/* ── Clear user store on logout ──────────────────────────────── */
 export function clearUserStore(userId) {
   ["orders", "clients"].forEach((col) => localStorage.removeItem(key(userId, col)));
 }
 
-/* ── Unique ID generator ─────────────────────────────────────── */
 export function generateId(prefix) {
   return `${prefix}-${Date.now().toString(36).toUpperCase()}`;
 }
 
-/* ── Client Measurements (per client user, keyed by their userId) */
+// Client measurements (keyed by client userId)
 export function getMeasurements(userId) { return read(key(userId, "measurements")) ?? {}; }
 export function saveMeasurements(userId, m) { write(key(userId, "measurements"), m); }
 
-/* ── Client Profile (name, phone, gender, avatar) ────────────── */
+// Client profile
 export function getClientProfile(userId) { return read(key(userId, "clientProfile")) ?? null; }
 export function saveClientProfile(userId, profile) { write(key(userId, "clientProfile"), profile); }
 
-/* ── Client Orders (cross-portal: written by artisan, read by client) ── */
+// Cross-portal: artisan writes orders to client's email bucket
 export function getClientOrders(clientEmail) {
   return read(`fl:client:${clientEmail}:orders`) ?? [];
 }
@@ -53,11 +42,6 @@ export function saveClientOrders(clientEmail, orders) {
   write(`fl:client:${clientEmail}:orders`, orders);
 }
 
-/**
- * pushOrderToClient — called by artisan when creating/updating an order.
- * Appends or replaces the order in the client's order bucket, keyed by email.
- * This is how client portal sees artisan-created orders.
- */
 export function pushOrderToClient(clientEmail, order) {
   if (!clientEmail) return;
   const existing = getClientOrders(clientEmail);
@@ -67,22 +51,13 @@ export function pushOrderToClient(clientEmail, order) {
   saveClientOrders(clientEmail, existing);
 }
 
-/**
- * removeOrderFromClient — called by artisan when deleting an order.
- */
 export function removeOrderFromClient(clientEmail, orderId) {
   if (!clientEmail) return;
-  const filtered = getClientOrders(clientEmail).filter((o) => o.id !== orderId);
-  saveClientOrders(clientEmail, filtered);
+  saveClientOrders(clientEmail, getClientOrders(clientEmail).filter((o) => o.id !== orderId));
 }
 
-/* ── Global registered clients registry ──────────────────────
- * When a client signs up, their {id, email, fullName, phone} is
- * stored here so artisans can search and autofill from real accounts.
- */
-export function getRegisteredClients() {
-  return read("fl:global:registeredClients") ?? [];
-}
+// Global client registry — clients who signed up
+export function getRegisteredClients() { return read("fl:global:registeredClients") ?? []; }
 
 export function registerClient(clientData) {
   const all = getRegisteredClients();
@@ -94,4 +69,23 @@ export function registerClient(clientData) {
 
 export function findRegisteredClient(email) {
   return getRegisteredClients().find((c) => c.email === email) ?? null;
+}
+
+// Global artisan registry — artisans who signed up (for network merging)
+export function getRegisteredArtisans() { return read("fl:global:registeredArtisans") ?? []; }
+
+export function registerArtisan(artisanData) {
+  if (!artisanData.id && !artisanData.email) return;
+  const all = getRegisteredArtisans();
+  const idx = all.findIndex((a) => a.id === artisanData.id || a.email === artisanData.email);
+  if (idx >= 0) all[idx] = { ...all[idx], ...artisanData };
+  else all.push(artisanData);
+  write("fl:global:registeredArtisans", all);
+}
+
+export function getAllArtisans(mockArtisans) {
+  const real = getRegisteredArtisans();
+  const realIds = new Set(real.map((a) => a.id));
+  // Merge: real users first, then mock artisans not already in real list
+  return [...real, ...mockArtisans.filter((m) => !realIds.has(m.id))];
 }

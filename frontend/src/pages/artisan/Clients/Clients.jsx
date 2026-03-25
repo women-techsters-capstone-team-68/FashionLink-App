@@ -1,7 +1,3 @@
-/**
- * Clients.jsx — /artisan/clients
- * Reads from DataContext — no static mock data.
- */
 import { useState }     from "react";
 import { useNavigate }  from "react-router-dom";
 import { useData }      from "../../../context/DataContext.jsx";

@@ -1,3 +1,14 @@
+/**
+ * MyOrders.jsx — /client/orders
+ *
+ * Fixed:
+ *  - getClientOrders() now keyed by user.email (matches artisan pushOrderToClient)
+ *  - Search works across client name, artisan name, description, status
+ *  - Hover shows "View Order Details" overlay
+ *  - Click → inline OrderDetails view
+ *  - Orders also tried from API (GET /api/orders?mine=1) and merged
+ *  - Tracking opens inline overlay (same TrackingView used in artisan portal)
+ */
 import { useState, useEffect, useMemo } from "react";
 import { useAuth }                       from "../../../context/AuthContext.jsx";
 import { getClientOrders, saveClientOrders } from "../../../services/store.js";
@@ -376,7 +387,7 @@ export default function MyOrders() {
 
                   {hoveredId === order.id && (
                     <div className="order-card-hover-overlay">
-                      {/* <span>View Order Details</span> */}
+                      <span>View Order Details</span>
                     </div>
                   )}
                 </div>

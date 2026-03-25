@@ -36,6 +36,9 @@ import MyOrders            from "./pages/client/MyOrders/MyOrders.jsx";
 import Messages            from "./pages/client/Messages/Messages.jsx";
 import ClientNotifications from "./pages/client/Notifications/Notifications.jsx";
 import Profile             from "./pages/client/Profile/Profile.jsx";
+import ClientArtisanNetwork from "./pages/client/ClientArtisanNetwork/ClientArtisanNetwork.jsx";
+import ClientArtisanProfile from "./pages/client/ClientArtisanProfile/ClientArtisanProfile.jsx";
+import ClientArtisanContact from "./pages/client/ClientArtisanContact/ClientArtisanContact.jsx";
 
 /* ── Route Guards ────────────────────────────────────────── */
 function ProtectedRoute({ children, role }) {
@@ -89,6 +92,9 @@ function AppRoutes() {
       <Route path="/client/messages"      element={<ProtectedRoute role="client"><ClientLayout><Messages /></ClientLayout></ProtectedRoute>} />
       <Route path="/client/notifications" element={<ProtectedRoute role="client"><ClientLayout><ClientNotifications /></ClientLayout></ProtectedRoute>} />
       <Route path="/client/profile"       element={<ProtectedRoute role="client"><ClientLayout><Profile gender={gender} setGender={setGender} /></ClientLayout></ProtectedRoute>} />
+      <Route path="/client/artisans"      element={<ProtectedRoute role="client"><ClientLayout><ClientArtisanNetwork /></ClientLayout></ProtectedRoute>} />
+<Route path="/client/artisans/:id"        element={<ProtectedRoute role="client"><ClientLayout><ClientArtisanProfile /></ClientLayout></ProtectedRoute>} />
+<Route path="/client/artisans/:id/contact" element={<ProtectedRoute role="client"><ClientLayout><ClientArtisanContact /></ClientLayout></ProtectedRoute>} />
 
       {/* ── Fallback ── */}
       <Route path="*" element={<Navigate to="/" replace />} />

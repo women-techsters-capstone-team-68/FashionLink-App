@@ -1,4 +1,3 @@
-// ArtisanProfile.jsx — /artisan/network/:id — full profile with portfolio and reviews
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import ArtisanContact from "../ArtisanContact/ArtisanContact.jsx";
 import { artisans }               from "../../../data/artisanData.js";
