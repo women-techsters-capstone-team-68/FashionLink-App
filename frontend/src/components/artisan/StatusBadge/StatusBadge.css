@@ -1,0 +1,37 @@
+/* ─────────────────────────────────────────────
+   src/components/UI/StatusBadge/StatusBadge.css
+   Prefix: sb-
+───────────────────────────────────────────── */
+
+.sb {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.sb__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Variants ─────────────────────────────── */
+.sb--delayed    { background: #fff0f0; color: #ef4444; }
+.sb--assigned   { background: #f0f0ff; color: #6c63ff; }
+.sb--inprogress { background: #fffbec; color: #f59e0b; }
+.sb--completed  { background: #ecfdf5; color: #10b981; }
+.sb--default    { background: #f0f2f8; color: #8891aa; }
+
+.sb--delayed    .sb__dot { background: #ef4444; }
+.sb--assigned   .sb__dot { background: #6c63ff; }
+.sb--inprogress .sb__dot { background: #f59e0b; }
+.sb--completed  .sb__dot { background: #10b981; }
+.sb--default    .sb__dot { background: #8891aa; }

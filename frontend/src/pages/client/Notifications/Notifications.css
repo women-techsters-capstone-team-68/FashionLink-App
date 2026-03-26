@@ -1,0 +1,17 @@
+.cn { display: flex; flex-direction: column; gap: 0; }
+.cn__bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; background: #fff; border: 1.5px solid #e8eaf0; border-radius: 16px 16px 0 0; }
+.cn__label { font-size: 14px; font-weight: 600; color: #4a506b; font-family: 'Poppins', sans-serif; }
+.cn__mark-all { background: none; border: none; font-size: 13px; color: #6b5ce7; cursor: pointer; font-weight: 600; font-family: 'Poppins', sans-serif; }
+.cn__list { background: #fff; border: 1.5px solid #e8eaf0; border-top: none; border-radius: 0 0 16px 16px; overflow: hidden; }
+.cn__row { display: flex; align-items: flex-start; gap: 14px; padding: 18px 20px; border-bottom: 1px solid #f0f2f8; transition: background 0.15s; }
+.cn__row:last-child { border-bottom: none; }
+.cn__row:hover { background: #fafafa; }
+.cn__row--read { background: #fff; }
+.cn__row-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.cn__row-content { flex: 1; min-width: 0; }
+.cn__row-title { font-size: 14px; font-weight: 700; color: #1a1f36; margin: 0 0 4px; font-family: 'Poppins', sans-serif; }
+.cn__row-body { font-size: 13px; color: #6b7494; margin: 0; line-height: 1.5; font-family: 'Poppins', sans-serif; }
+.cn__mark-read { background: none; border: none; color: #6b5ce7; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; margin-top: 6px; font-family: 'Poppins', sans-serif; }
+.cn__row-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+.cn__row-time { font-size: 11px; color: #aab0c8; }
+.cn__row-dot { width: 8px; height: 8px; border-radius: 50%; background: #6b5ce7; }

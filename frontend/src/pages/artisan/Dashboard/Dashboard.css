@@ -1,0 +1,247 @@
+/* ════════════════════════════════════════════════════════════════
+   Dashboard.css  —  prefix: dash-
+   Page-level layout only. Component styles live in their own files.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Page wrapper */
+.dash {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  animation: fadeUp 0.35s ease both;
+}
+
+/* ── Stat cards: 4-column grid ───────────────────────────────── */
+.dash__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* ── AI cards row: left card | right column (AI card + button) ─ */
+.dash__ai-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.dash__ai-right {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ── Add New Order button ────────────────────────────────────── */
+.dash__add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: #6C63FF;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 16px 24px;
+  font-family: 'Sora', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(108, 99, 255, 0.32);
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fadeUp 0.5s ease 0.35s both;
+  letter-spacing: 0.01em;
+}
+
+.dash__add-btn:hover {
+  background: #5750e8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(108, 99, 255, 0.42);
+}
+
+.dash__add-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 14px rgba(108, 99, 255, 0.3);
+}
+
+.dash__add-btn .icon     { display: flex; align-items: center; }
+.dash__add-btn .icon svg { width: 18px; height: 18px; }
+
+/* ── Breakpoints ─────────────────────────────────────────────── */
+
+/* lg → 2-col stat grid */
+@media (max-width: 1279px) {
+  .dash__stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* md → AI row stacks vertically */
+@media (max-width: 1023px) {
+  .dash__ai-row { grid-template-columns: 1fr; }
+  .dash__stats  { gap: 14px; }
+  .dash         { gap: 20px; }
+}
+
+/* sm */
+@media (max-width: 767px) {
+  .dash           { gap: 16px; }
+  .dash__stats    { gap: 12px; }
+  .dash__add-btn  { padding: 14px 20px; font-size: 0.88rem; }
+}
+
+/* xs → 2-col stat grid still (compact) */
+@media (max-width: 479px) {
+  .dash           { gap: 14px; }
+  .dash__stats    { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dash__add-btn  { padding: 13px 16px; font-size: 0.84rem; gap: 8px; }
+  .dash__add-btn .icon svg { width: 16px; height: 16px; }
+}
+
+/* ── Empty state (new user) ──────────────────────────────────── */
+.dash__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 56px 24px;
+  background: #fff;
+  border: 1.5px dashed #d4d0ff;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.dash__empty-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1d2e;
+  margin: 0;
+}
+
+.dash__empty-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #8891aa;
+  margin: 0;
+  max-width: 360px;
+}
+
+.dash__empty .dash__add-btn {
+  width: auto;
+  padding: 13px 28px;
+  margin-top: 8px;
+}
+
+/* ── Loading state ───────────────────────────────────────────── */
+.dash__loading {
+  padding: 40px;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #8891aa;
+}
+
+/* ── Dashboard search bar ────────────────────────────────────── */
+.dash__search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 12px;
+  padding: 0 14px;
+  gap: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dash__search-wrap:focus-within {
+  border-color: #6C63FF;
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
+}
+
+.dash__search-icon { color: #aab0c8; flex-shrink: 0; pointer-events: none; }
+
+.dash__search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #1a1d2e;
+  padding: 12px 0;
+}
+
+.dash__search-input::placeholder { color: #b0b8d0; }
+
+.dash__search-clear {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aab0c8;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  transition: color 0.15s;
+}
+.dash__search-clear:hover { color: #6C63FF; }
+
+/* ── Search results dropdown ─────────────────────────────────── */
+.dash__search-results {
+  background: #fff;
+  border: 1.5px solid #e8eaf0;
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(26,29,46,0.1);
+  overflow: hidden;
+  margin-top: -16px;  /* tuck under search bar */
+}
+
+.dash__search-empty {
+  padding: 20px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #8891aa;
+  margin: 0;
+}
+
+.dash__search-section { border-bottom: 1px solid #f0f2f8; }
+.dash__search-section:last-child { border-bottom: none; }
+
+.dash__search-section-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #aab0c8;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 12px 20px 6px;
+  margin: 0;
+}
+
+.dash__search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dash__search-item:hover { background: #f8f7ff; }
+
+.dash__search-item-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1a1d2e;
+}
+
+.dash__search-item-sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  color: #8891aa;
+}
