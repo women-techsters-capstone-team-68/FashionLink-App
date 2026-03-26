@@ -1,7 +1,7 @@
 .lp {
   min-height: 100vh;
   background: #1d1e27;
-  color: #fff;
+  color: #f6e0e0;
   display: flex;
   flex-direction: column;
   font-family: 'DM Sans', sans-serif;
@@ -9,29 +9,29 @@
 
 /* buttons */
 .lp__btn-primary {
-  background: #6C63FF;
-  color: #fff;
+  background: #5146dfc2;
+  color: #f6e0e0;
   border: none;
-  border-radius: 10px;
+  border-radius: 11px;
   padding: 10px 22px;
   font-family: 'Sora', sans-serif;
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 4px 16px rgba(108,99,255,0.35);
+  /* box-shadow: 0 4px 16px rgba(108,99,255,0.35); */
   white-space: nowrap;
 }
 
 .lp__btn-primary:hover {
-  background: #5750e8;
+  background: #433ab7;
   transform: translateY(-1px);
-  box-shadow: 0 6px 22px rgba(108,99,255,0.45);
+  /* box-shadow: 0 6px 22px rgba(108,99,255,0.45); */
 }
 
 .lp__btn-ghost {
   background: none;
-  color: #c5cce8;
+  color: #b1b8d4;
   border: none;
   border-radius: 10px;
   padding: 10px 22px;
@@ -44,13 +44,13 @@
 }
 
 .lp__btn-ghost:hover { 
-  color: #fff; 
+  color: #f6e0e0; 
   background: rgba(255,255,255,0.07); 
 }
 
 .lp__btn-outline {
   background: none;
-  color: #fff;
+  color: #f6e0e0;
   border: 2px solid rgba(255,255,255,0.3);
   border-radius: 10px;
   padding: 10px 22px;
@@ -63,12 +63,12 @@
 }
 
 .lp__btn-outline:hover { 
-  border-color: rgba(255,255,255,0.6); 
+  border-color: rgba(195, 192, 192, 0.6); 
   background: rgba(255,255,255,0.07); 
 }
 
 .lp__btn-white {
-  background: #fff;
+  background: #ddd9d9;
   color: #1a1d2e;
   border: none;
   border-radius: 10px;
@@ -81,7 +81,7 @@
 }
 
 .lp__btn-white:hover { 
-  background: #f0f0ff; 
+  background: #bebec2; 
   transform: translateY(-1px); 
 }
 
@@ -96,7 +96,7 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(19, 21, 42, 0.88);
+  background: rgba(21, 24, 54, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255,255,255,0.07);
@@ -127,7 +127,7 @@
   font-family: 'Sora', sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
-  color: #fff;
+  color: #f6e0e0;
   letter-spacing: -0.01em;
 }
 
@@ -161,9 +161,9 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: rgba(108,99,255,0.18);
-  border: 1px solid rgba(108,99,255,0.35);
-  color: #a5a0ff;
+  background: #45409d2e;
+  border: 1px solid #17152d59;
+  color: #8f89f8;
   border-radius: 100px;
   padding: 6px 16px;
   font-family: 'DM Sans', sans-serif;
@@ -176,7 +176,7 @@
   font-family: 'Sora', sans-serif;
   font-size: clamp(2rem, 5vw, 2.8rem);
   font-weight: 800;
-  color: #fff;
+  color: #f6e0e0;
   margin: 0;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -185,7 +185,7 @@
 .lp__hero-sub {
   font-family: 'DM Sans', sans-serif;
   font-size: 1rem;
-  color: #8891aa;
+  color: #636b7f;
   line-height: 1.7;
   margin: 0;
   max-width: 520px;
@@ -229,9 +229,9 @@
 }
 
 .lp__feature-card:hover {
-  background: rgba(108,99,255,0.09);
+  background: rgba(141, 136, 243, 0.21);
   border-color: rgba(108,99,255,0.25);
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
 }
 
 .lp__feature-icon {
@@ -242,7 +242,7 @@
   height: 44px;
   border-radius: 12px;
   background: rgba(108,99,255,0.18);
-  color: #a5a0ff;
+  color: #a5a0ffaa;
   flex-shrink: 0;
 }
 
@@ -250,7 +250,7 @@
   font-family: 'Sora', sans-serif;
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  color: #fdf9f9dc;
   margin: 0;
 }
 
@@ -270,7 +270,8 @@
 .lp__cta-inner {
   max-width: 960px;
   margin: 0 auto;
-  background: linear-gradient(135deg, #5750e8 0%, #7c74ff 100%);
+  background: #5850e865 ;
+  /* background: linear-gradient(135deg, #5850e894 0%, #7b74ffa5 100%); */
   border-radius: 24px;
   padding: 56px 40px;
   text-align: center;
@@ -284,7 +285,7 @@
   font-family: 'Sora', sans-serif;
   font-size: clamp(1.4rem, 3.5vw, 1.9rem);
   font-weight: 800;
-  color: #fff;
+  color: #f0e5e5c9;
   margin: 0;
   line-height: 1.2;
 }
@@ -292,7 +293,7 @@
 .lp__cta-sub {
   font-family: 'DM Sans', sans-serif;
   font-size: 0.95rem;
-  color: rgba(255,255,255,0.8);
+  color: #ffffffcc;
   margin: 0;
 }
 

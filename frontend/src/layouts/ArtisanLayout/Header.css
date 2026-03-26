@@ -1,7 +1,3 @@
-/* ════════════════════════════════════════════════════════════════
-   Header.css  —  uses header__ class names matching existing JSX
-   ════════════════════════════════════════════════════════════════ */
-
 .header {
   display: flex;
   align-items: center;

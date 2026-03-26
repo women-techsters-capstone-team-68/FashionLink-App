@@ -1,6 +1,6 @@
 .sidebar {
-  width: 230px;
-  min-width: 230px;
+  width: 270px;
+  min-width: 260px;
   background: #1a1f36;
   display: flex;
   flex-direction: column;
@@ -8,6 +8,7 @@
   height: 100vh;
   position: sticky;
   top: 0;
+  z-index: 100;
 }
 
 .sidebar-brand {
@@ -132,14 +133,20 @@
   color: #e05252; 
 }
 
+/* ── Mobile / Tablet Fix: align with React state (mobileOpen) ── */
 @media (max-width: 1024px) {
   .sidebar {
+    width: 290px;
     position: fixed;
-    left: -230px;
-    transition: left 0.3s ease;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%); /* hide by default */
+    transition: transform 0.3s ease;
     z-index: 100;
   }
-  .sidebar.open {
-    left: 0;
+
+  /* FIX: was `.open`, now matches `mobileOpen` from component */
+  .sidebar.mobileOpen {
+    transform: translateX(0);
   }
 }
